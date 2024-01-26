@@ -8,6 +8,8 @@ import { SwMaterialTableComponent } from './sw-material-table/sw-material-table.
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
+import { RouterModule } from '@angular/router';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [AppComponent, SwMaterialTableComponent],
@@ -17,6 +19,8 @@ import { MatSortModule } from '@angular/material/sort';
     MatTableModule,
     MatPaginatorModule,
     MatSortModule,
+    RouterModule,
+    HttpClientModule,
     // AppRoutingModule
   ],
   providers: [],
