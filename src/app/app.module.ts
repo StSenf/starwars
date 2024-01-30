@@ -10,9 +10,16 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
 import { RouterModule } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
+import { SwPlainTableComponent } from './sw-plain-table/sw-plain-table.component';
+import { SwDisplayValueComponent } from './shared/sw-display-value.component';
 
 @NgModule({
-  declarations: [AppComponent, SwMaterialTableComponent],
+  declarations: [
+    AppComponent,
+    SwMaterialTableComponent,
+    SwPlainTableComponent,
+    SwDisplayValueComponent,
+  ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,

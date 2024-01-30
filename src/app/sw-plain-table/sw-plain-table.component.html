@@ -1,0 +1,30 @@
+<table class="table">
+  <thead class="thead-dark">
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Name</th>
+      <th scope="col">Birth</th>
+      <th scope="col">Home planet</th>
+      <th scope="col">Species</th>
+      <th scope="col">Url</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngIf="isLoaded === false">
+      <td colspan="6">... is loading</td>
+    </tr>
+    <tr *ngFor="let person of tableData; let i = index">
+      <th scope="row">{{ i + 1 }}</th>
+      <td>{{ person.name }}</td>
+      <td>{{ person.birth_year }}</td>
+      <td>
+        <sw-display-value
+          [endpoint]="person.homeworld"
+          [displayProperty]="'name'"
+        ></sw-display-value>
+      </td>
+      <td>{{ person.species }}</td>
+      <td>{{ person.url }}</td>
+    </tr>
+  </tbody>
+</table>

@@ -5,6 +5,7 @@ import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 
 import { SwMaterialTableComponent } from './sw-material-table.component';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 describe('SwMaterialTableComponent', () => {
   let component: SwMaterialTableComponent;
@@ -18,7 +19,8 @@ describe('SwMaterialTableComponent', () => {
         MatPaginatorModule,
         MatSortModule,
         MatTableModule,
-      ]
+        HttpClientTestingModule,
+      ],
     }).compileComponents();
   }));
 
