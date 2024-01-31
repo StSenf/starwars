@@ -12,22 +12,24 @@ import { RouterModule } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
 import { SwPlainTableComponent } from './sw-plain-table/sw-plain-table.component';
 import { SwDisplayValueComponent } from './shared/sw-display-value.component';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
     AppComponent,
+    SwDisplayValueComponent,
     SwMaterialTableComponent,
     SwPlainTableComponent,
-    SwDisplayValueComponent,
   ],
   imports: [
-    BrowserModule,
     BrowserAnimationsModule,
-    MatTableModule,
+    BrowserModule,
+    FormsModule,
+    HttpClientModule,
     MatPaginatorModule,
     MatSortModule,
+    MatTableModule,
     RouterModule,
-    HttpClientModule,
     // AppRoutingModule
   ],
   providers: [],
