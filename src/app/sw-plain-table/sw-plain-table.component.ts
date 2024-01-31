@@ -18,8 +18,8 @@ export interface SwPerson {
   mass: string;
   skin_color: string;
   homeworld: string;
-  films: any[]; //array of films
-  species: any[]; // array of species resource URLs.
+  films: string[]; //array of films resource URLs
+  species: string[]; // array of species resource URLs.
   starships: any[]; // array of starship resource URLs that this person has piloted.
   vehicles: any[]; // An array of vehicle resource URLs that this person has piloted.
   url: string; // the hypermedia URL of this resource.

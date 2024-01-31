@@ -1,1 +1,6 @@
-<span>{{ displayValue$ | async }}</span>
+<span
+  *ngIf="isRequestCompleted === true"
+  [ngClass]="{ 'is-multiple': isMultiple, 'is-last-multiple': isLastMultiple }"
+>
+  {{ displayValue }}
+</span>

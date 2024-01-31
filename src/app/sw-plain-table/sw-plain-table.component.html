@@ -6,6 +6,7 @@
       <th scope="col">Birth</th>
       <th scope="col">Home planet</th>
       <th scope="col">Species</th>
+      <th scope="col">Movies</th>
       <th scope="col">Url</th>
     </tr>
   </thead>
@@ -23,7 +24,23 @@
           [displayProperty]="'name'"
         ></sw-display-value>
       </td>
-      <td>{{ person.species }}</td>
+      <td>
+        <sw-display-value
+          *ngFor="let species of person.species"
+          [endpoint]="species"
+          [displayProperty]="'name'"
+        ></sw-display-value>
+      </td>
+      <td>
+        <sw-display-value
+          *ngFor="let movie of person.films; last as isLast"
+          [isMultiple]="true"
+          [isLastMultiple]="isLast"
+          [endpoint]="movie"
+          [displayProperty]="'title'"
+        ></sw-display-value>
+      </td>
+
       <td>{{ person.url }}</td>
     </tr>
   </tbody>
