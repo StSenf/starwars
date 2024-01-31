@@ -12,7 +12,7 @@
   </thead>
   <tbody>
     <tr *ngIf="isLoaded === false">
-      <td colspan="6">... is loading</td>
+      <td colspan="7">... is loading</td>
     </tr>
     <tr *ngFor="let person of tableData; let i = index">
       <th scope="row">{{ i + 1 }}</th>
@@ -52,8 +52,16 @@
     style="width: auto"
     [(ngModel)]="pageSize"
     (ngModelChange)="refreshTable()"
+    [disabled]="isLimitEndpointActive === false"
   >
     <option [ngValue]="5">5 items per page</option>
     <option [ngValue]="10">10 items per page</option>
   </select>
+
+  <sw-pagination
+    [endpoint]="endpoint"
+    [pageSize]="pageSize"
+    [currentPage]="currentPage"
+    (clickedPage)="refreshTable($event)"
+  ></sw-pagination>
 </div>

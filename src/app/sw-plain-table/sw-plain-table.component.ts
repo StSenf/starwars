@@ -1,31 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { pluck, take } from 'rxjs';
+import { SwPerson } from '../shared/model/interfaces';
+import { STANDARD_PAGE_SIZE } from '../shared/model/constants';
 
-export interface SwApiPersonResponse {
-  count: number;
-  next: string;
-  previous: string;
-  results: SwPerson[];
-}
-export interface SwPerson {
-  name: string;
-  birth_year: string;
-  eye_color: string;
-  gender: string;
-  hair_color: string;
-  height: string;
-  mass: string;
-  skin_color: string;
-  homeworld: string;
-  films: string[]; //array of films resource URLs
-  species: string[]; // array of species resource URLs.
-  starships: any[]; // array of starship resource URLs that this person has piloted.
-  vehicles: any[]; // An array of vehicle resource URLs that this person has piloted.
-  url: string; // the hypermedia URL of this resource.
-  created: string; //the ISO 8601 date format of the time that this resource was created.
-  edited: string; // the ISO 8601 date format of the time that this resource was edited.
-}
 @Component({
   selector: 'sw-plain-table',
   templateUrl: './sw-plain-table.component.html',
@@ -33,36 +11,50 @@ export interface SwPerson {
 export class SwPlainTableComponent implements OnInit {
   tableData: SwPerson[];
   isLoaded: boolean = false;
-  pageSize: number = 5;
+  pageSize: number = STANDARD_PAGE_SIZE;
   currentPage: number = 1;
 
+  endpoint: string;
   private _pplEndpoint: string = 'https://swapi.dev/api/people?page=1&limit=5'; // -> limit does NOT work with this endpoint
   // private _pplEndpoint: string = 'https://www.swapi.tech/api/people'; // -> limit works with this endpoint
-  private _endpoint: string;
+  isLimitEndpointActive = false;
 
   constructor(private _http: HttpClient) {}
 
   ngOnInit(): void {
-    this.assembleEndpoint();
+    this.assembleEndpoint(this._pplEndpoint, this.currentPage, this.pageSize);
     this.fetchDataFromApi();
   }
 
-  assembleEndpoint(): void {
-    this._endpoint =
-      this._pplEndpoint +
-      '?' +
-      `&page=${this.currentPage}` +
-      `&limit=${this.pageSize}`;
+  /**
+   * Assembles the endpoint that is sent to API.
+   * @param endpoint String of desired endpoint
+   * @param page Current page number
+   * @param pageSize current table page size
+   */
+  assembleEndpoint(endpoint: string, page: number, pageSize?: number): void {
+    this.endpoint = endpoint + '?' + `&page=${page}` + `&limit=${pageSize}`;
   }
 
-  refreshTable(): void {
-    this.assembleEndpoint();
+  /**
+   * Either change amount of displayed data or use paging.
+   * Sends new API request.
+   * @param page Possible changed pagination page
+   */
+  refreshTable(page?: number): void {
+    let refreshPage: number = this.currentPage;
+    if (page) {
+      this.currentPage = page;
+      refreshPage = page;
+    }
+
+    this.assembleEndpoint(this._pplEndpoint, refreshPage, this.pageSize);
     this.fetchDataFromApi();
   }
 
   fetchDataFromApi(): void {
     this._http
-      .get(this._endpoint)
+      .get(this.endpoint)
       .pipe(pluck('results'), take(1))
       .subscribe((swPeople: SwPerson[]) => {
         this.isLoaded = true;

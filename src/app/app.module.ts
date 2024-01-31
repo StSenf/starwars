@@ -11,14 +11,16 @@ import { MatSortModule } from '@angular/material/sort';
 import { RouterModule } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
 import { SwPlainTableComponent } from './sw-plain-table/sw-plain-table.component';
-import { SwDisplayValueComponent } from './shared/sw-display-value.component';
+import { SwDisplayValueComponent } from './shared/sw-display-value/sw-display-value.component';
 import { FormsModule } from '@angular/forms';
+import { SwPaginationComponent } from './shared/sw-pagination/sw-pagination.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     SwDisplayValueComponent,
     SwMaterialTableComponent,
+    SwPaginationComponent,
     SwPlainTableComponent,
   ],
   imports: [

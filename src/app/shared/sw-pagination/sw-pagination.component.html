@@ -1,0 +1,28 @@
+<ng-container
+  *ngIf="{ availablePagesCount: availablePagesCount$ | async } as obj"
+>
+  <ul class="pagination">
+    <li
+      class="page-item"
+      [ngClass]="{ disabled: currentPage === 1 }"
+      (click)="clickPrevious()"
+    >
+      <span class="page-link">Previous</span>
+    </li>
+    <li
+      [ngClass]="{ active: i + 1 === currentPage }"
+      *ngFor="let _ of [].constructor(obj.availablePagesCount); let i = index"
+      class="page-item"
+      (click)="changePage(i + 1)"
+    >
+      <span class="page-link">{{ i + 1 }}</span>
+    </li>
+    <li
+      class="page-item"
+      [ngClass]="{ disabled: currentPage === obj.availablePagesCount }"
+      (click)="clickNext()"
+    >
+      <span class="page-link">Next</span>
+    </li>
+  </ul>
+</ng-container>

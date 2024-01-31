@@ -27,11 +27,8 @@ describe('SwDisplayValueComponent', () => {
   });
 
   describe('http get request', () => {
-    let displayValueResult = undefined;
-
     afterEach(() => {
       httpTestingController.verify();
-      displayValueResult = undefined;
     });
 
     it('should return correct display value', () => {
@@ -43,13 +40,11 @@ describe('SwDisplayValueComponent', () => {
       component.displayProperty = 'name';
       component.ngOnInit();
 
-      component.displayValue$.subscribe((dv) => (displayValueResult = dv));
-
       const req = httpTestingController.expectOne(endpoint);
       expect(req.request.method).toEqual('GET');
       req.flush(testData);
 
-      expect(displayValueResult).toBe(testPropertyValue);
+      expect(component.displayValue).toBe(testPropertyValue);
     });
 
     it('should not return if empty endpoint', () => {
@@ -57,10 +52,8 @@ describe('SwDisplayValueComponent', () => {
       component.displayProperty = 'name';
       component.ngOnInit();
 
-      component.displayValue$.subscribe((dv) => (displayValueResult = dv));
-
       httpTestingController.expectNone('');
-      expect(displayValueResult).toBe(undefined);
+      expect(component.displayValue).toBe(undefined);
     });
   });
 });
