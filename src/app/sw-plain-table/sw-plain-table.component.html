@@ -1,4 +1,19 @@
-<table class="table">
+<div class="row p-2 mb-3">
+  <div class="col-4">
+    <div class="form-group">
+      <input
+        [formControl]="searchControl"
+        type="text"
+        class="form-control"
+        id="exampleInputPassword1"
+        placeholder="Search by name"
+      />
+    </div>
+  </div>
+  <div class="col">Hallo</div>
+</div>
+
+<table class="table p-2">
   <thead class="thead-dark">
     <tr>
       <th scope="col">#</th>
@@ -13,6 +28,9 @@
   <tbody>
     <tr *ngIf="isLoaded === false">
       <td colspan="7">... is loading</td>
+    </tr>
+    <tr *ngIf="isLoaded === true && tableData.length === 0">
+      <td colspan="7">No data found</td>
     </tr>
     <tr *ngFor="let person of tableData; let i = index">
       <th scope="row">{{ i + 1 }}</th>
@@ -51,7 +69,7 @@
     class="form-select"
     style="width: auto"
     [(ngModel)]="pageSize"
-    (ngModelChange)="refreshTable()"
+    (ngModelChange)="pageThroughTable()"
     [disabled]="isLimitEndpointActive === false"
   >
     <option [ngValue]="5">5 items per page</option>
@@ -62,6 +80,6 @@
     [endpoint]="endpoint"
     [pageSize]="pageSize"
     [currentPage]="currentPage"
-    (clickedPage)="refreshTable($event)"
+    (clickedPage)="pageThroughTable($event)"
   ></sw-pagination>
 </div>

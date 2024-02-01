@@ -12,7 +12,7 @@ import { RouterModule } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
 import { SwPlainTableComponent } from './sw-plain-table/sw-plain-table.component';
 import { SwDisplayValueComponent } from './shared/sw-display-value/sw-display-value.component';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SwPaginationComponent } from './shared/sw-pagination/sw-pagination.component';
 
 @NgModule({
@@ -27,6 +27,7 @@ import { SwPaginationComponent } from './shared/sw-pagination/sw-pagination.comp
     BrowserAnimationsModule,
     BrowserModule,
     FormsModule,
+    ReactiveFormsModule,
     HttpClientModule,
     MatPaginatorModule,
     MatSortModule,

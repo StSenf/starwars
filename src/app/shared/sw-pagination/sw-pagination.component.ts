@@ -39,6 +39,9 @@ export class SwPaginationComponent implements OnInit, OnDestroy {
     this.getAvailablePagesCount();
   }
 
+  // ToDo: better calculate the amount outside of component, component should be as stupid as possible
+  @Input() availableRecords: number;
+
   /** Endpoint that's data should be used for paging. Response carries the count of records. */
   @Input() endpoint: string;
 
