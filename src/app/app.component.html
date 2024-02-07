@@ -1,6 +1,4 @@
-<!--<sw-material-table></sw-material-table>-->
-<!-- Image and text -->
-<nav class="navbar navbar-dark bg-dark mb-3">
+<nav class="navbar navbar-expand navbar-dark bg-dark mb-3">
   <div class="navbar-brand">
     <img
       src="https://upload.wikimedia.org/wikipedia/commons/6/6c/Star_Wars_Logo.svg"
@@ -12,6 +10,30 @@
     <span class="d-inline-block" style="width: 10px"></span>
     <span class="d-inline-block p-lg-1">Star Wars API Playground</span>
   </div>
+
+  <div class="navbar-nav">
+    <a
+      class="nav-item nav-link"
+      routerLink="/plain-table"
+      routerLinkActive="active"
+    >
+      Plain Table
+    </a>
+    <a
+      class="nav-item nav-link"
+      routerLink="/material-table"
+      routerLinkActive="active"
+    >
+      Material Table
+    </a>
+    <a
+      class="nav-item nav-link disabled"
+      routerLink="/ngb-table"
+      routerLinkActive="active"
+    >
+      Ngb Table
+    </a>
+  </div>
 </nav>
 
-<sw-plain-table></sw-plain-table>
+<router-outlet></router-outlet>

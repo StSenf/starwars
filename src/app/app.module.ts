@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
-// import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { SwMaterialTableComponent } from './sw-material-table/sw-material-table.component';
@@ -14,6 +13,7 @@ import { SwPlainTableComponent } from './sw-plain-table/sw-plain-table.component
 import { SwDisplayValueComponent } from './shared/sw-display-value/sw-display-value.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SwPaginationComponent } from './shared/sw-pagination/sw-pagination.component';
+import { AppRoutingModule } from './app-routing.module';
 
 @NgModule({
   declarations: [
@@ -33,7 +33,7 @@ import { SwPaginationComponent } from './shared/sw-pagination/sw-pagination.comp
     MatSortModule,
     MatTableModule,
     RouterModule,
-    // AppRoutingModule
+    AppRoutingModule,
   ],
   providers: [],
   bootstrap: [AppComponent],
