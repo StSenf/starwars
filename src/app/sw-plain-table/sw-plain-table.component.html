@@ -5,81 +5,83 @@
         [formControl]="searchControl"
         type="text"
         class="form-control"
-        id="exampleInputPassword1"
         placeholder="Search by name"
       />
     </div>
   </div>
-  <div class="col">Hallo</div>
 </div>
 
-<table class="table p-2">
-  <thead class="thead-dark">
-    <tr>
-      <th scope="col">#</th>
-      <th scope="col">Name</th>
-      <th scope="col">Birth</th>
-      <th scope="col">Home</th>
-      <th scope="col">Species</th>
-      <th scope="col">Movies</th>
-      <th scope="col">Url</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr *ngIf="isLoaded === false">
-      <td colspan="7">... is loading</td>
-    </tr>
-    <tr *ngIf="isLoaded === true && tableData.length === 0">
-      <td colspan="7">No data found</td>
-    </tr>
-    <tr *ngFor="let person of tableData; let i = index">
-      <th scope="row">{{ i + 1 }}</th>
-      <td>{{ person.name }}</td>
-      <td>{{ person.birth_year }}</td>
-      <td>
-        <sw-display-value
-          [endpoint]="person.homeworld"
-          [displayProperty]="'name'"
-        ></sw-display-value>
-      </td>
-      <td>
-        <sw-display-value
-          *ngFor="let species of person.species"
-          [endpoint]="species"
-          [displayProperty]="'name'"
-        ></sw-display-value>
-      </td>
-      <td>
-        <sw-display-value
-          *ngFor="let movie of person.films; last as isLast"
-          [isMultiple]="true"
-          [isLastMultiple]="isLast"
-          [endpoint]="movie"
-          [displayProperty]="'title'"
-        ></sw-display-value>
-      </td>
+<ng-container
+  *ngIf="{
+    isLoaded: isLoaded$ | async,
+    apiResponse: apiResponse$ | async
+  } as obj"
+>
+  <table class="table p-2">
+    <thead class="thead-dark">
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Name</th>
+        <th scope="col">Birth</th>
+        <th scope="col">Home</th>
+        <th scope="col">Species</th>
+        <th scope="col">Movies</th>
+        <th scope="col">Url</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngIf="obj.isLoaded === false">
+        <td colspan="7">... is loading</td>
+      </tr>
+      <tr
+        *ngIf="obj.isLoaded === true && obj.apiResponse?.results?.length === 0"
+      >
+        <td colspan="7">No data found</td>
+      </tr>
+      <tr *ngFor="let person of obj.apiResponse?.results; let i = index">
+        <th scope="row">{{ i + 1 }}</th>
+        <td>{{ person.name }}</td>
+        <td>{{ person.birth_year }}</td>
+        <td>
+          <sw-display-value
+            [endpoint]="person.homeworld"
+            [displayProperty]="'name'"
+          ></sw-display-value>
+        </td>
+        <td>
+          <sw-display-value
+            *ngFor="let species of person.species"
+            [endpoint]="species"
+            [displayProperty]="'name'"
+          ></sw-display-value>
+        </td>
+        <td>
+          <sw-display-value
+            *ngFor="let movie of person.films; last as isLast"
+            [isMultiple]="true"
+            [isLastMultiple]="isLast"
+            [endpoint]="movie"
+            [displayProperty]="'title'"
+          ></sw-display-value>
+        </td>
 
-      <td>{{ person.url }}</td>
-    </tr>
-  </tbody>
-</table>
+        <td>{{ person.url }}</td>
+      </tr>
+    </tbody>
+  </table>
+</ng-container>
 
 <div class="d-flex justify-content-between p-2">
-  <select
-    class="form-select"
-    style="width: auto"
-    [(ngModel)]="pageSize"
-    (ngModelChange)="pageThroughTable()"
-    [disabled]="isLimitEndpointActive === false"
-  >
+  <select class="form-select" style="width: auto" [formControl]="limitControl">
     <option [ngValue]="5">5 items per page</option>
     <option [ngValue]="10">10 items per page</option>
   </select>
 
   <sw-pagination
-    [endpoint]="endpoint"
-    [pageSize]="pageSize"
+    *ngIf="availableRecords"
+    [availableRecords]="availableRecords"
+    [pageSize]="currentPageLimit"
     [currentPage]="currentPage"
-    (clickedPage)="pageThroughTable($event)"
+    (clickedPage)="changePage($event)"
   ></sw-pagination>
 </div>

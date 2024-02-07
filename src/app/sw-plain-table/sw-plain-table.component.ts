@@ -1,111 +1,131 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import {
-  debounceTime,
-  distinctUntilChanged,
-  filter,
-  pluck,
-  startWith,
-  Subject,
-  take,
-  takeUntil,
-} from 'rxjs';
-import { SwPerson } from '../shared/model/interfaces';
+import { SwApiResponse } from '../shared/model/interfaces';
 import { STANDARD_PAGE_SIZE } from '../shared/model/constants';
 import { FormControl } from '@angular/forms';
+import {
+  BehaviorSubject,
+  combineLatest,
+  debounceTime,
+  distinctUntilChanged,
+  Observable,
+  startWith,
+  switchMap,
+  tap,
+} from 'rxjs';
 
 @Component({
   selector: 'sw-plain-table',
   templateUrl: './sw-plain-table.component.html',
 })
-export class SwPlainTableComponent implements OnInit, OnDestroy {
-  tableData: SwPerson[];
-  isLoaded: boolean = false;
-  pageSize: number = STANDARD_PAGE_SIZE;
+export class SwPlainTableComponent implements OnInit {
+  currentPageLimit: number = STANDARD_PAGE_SIZE;
   currentPage: number = 1;
 
-  searchControl: FormControl = new FormControl();
+  apiResponse$: Observable<SwApiResponse>;
+  isLoaded$ = new BehaviorSubject<boolean>(false);
+  availableRecords: number;
 
-  endpoint: string;
   private _pplEndpoint: string = 'https://swapi.dev/api/people'; // -> limit does NOT work with this endpoint
   // private _pplEndpoint: string = 'https://www.swapi.tech/api/people'; // -> limit works with this endpoint
-  isLimitEndpointActive = false;
+  isLimitEndpointActive = this._pplEndpoint.includes('.tech');
 
-  private _ngDestroy$ = new Subject();
+  searchControl: FormControl = new FormControl({
+    value: '',
+    disabled: this.isLimitEndpointActive === true,
+  });
+  limitControl: FormControl = new FormControl({
+    value: this.currentPageLimit,
+    disabled: this.isLimitEndpointActive === false,
+  });
+
+  private _pageChange$ = new BehaviorSubject<number>(this.currentPage);
+  private _previousPageLimit: number;
+  private _previousSearchTerm: string = '';
 
   constructor(private _http: HttpClient) {}
 
   ngOnInit(): void {
-    this.assembleEndpoint(this._pplEndpoint, this.currentPage, this.pageSize);
-    this.fetchDataFromApi();
-
-    this.searchControl.valueChanges
-      .pipe(
+    /**
+     * Load table date on:
+     *  - page change
+     *  - page limit
+     *  - search term change
+     */
+    this.apiResponse$ = combineLatest([
+      this._pageChange$,
+      this.limitControl.valueChanges.pipe(startWith(this.currentPageLimit)),
+      this.searchControl.valueChanges.pipe(
         startWith(''),
-        debounceTime(300),
+        debounceTime(700),
         distinctUntilChanged(),
-        filter((input: string) => input.length > 2),
-        takeUntil(this._ngDestroy$),
-      )
-      .subscribe((enteredInput) => {
-        this.assembleEndpoint(
+      ),
+    ]).pipe(
+      switchMap(([page, pageLimit, enteredInput]) => {
+        const isNewPageSize: boolean = pageLimit !== this._previousPageLimit;
+        if (isNewPageSize) {
+          this.currentPage = 1; // if new page limit, pagination should switch to page one
+          this.currentPageLimit = pageLimit;
+          this._previousPageLimit = pageLimit;
+        }
+
+        const isNewSearchTerm: boolean =
+          enteredInput !== this._previousSearchTerm;
+        if (isNewSearchTerm) {
+          this.currentPage = 1; // if new searchTerm, pagination should switch to page one
+          this._previousSearchTerm = enteredInput;
+        }
+
+        return this.load(
           this._pplEndpoint,
           this.currentPage,
-          this.pageSize,
+          this.currentPageLimit,
           enteredInput,
         );
-        this.fetchDataFromApi();
-      });
-  }
-
-  ngOnDestroy(): void {
-    this._ngDestroy$.next(null);
+      }),
+      tap((response: SwApiResponse) => {
+        this.isLoaded$.next(!!response);
+        this.availableRecords = response.count || response.total_records;
+        console.log('random api response subscription', response);
+        console.log('this.availableRecords', this.availableRecords);
+      }),
+    );
   }
 
   /**
-   * Assembles the endpoint that is sent to API.
-   * @param endpoint Desired endpoint
-   * @param page Current page number
-   * @param pageSize Optional current table page size
-   * @param searchTerm Optional search term, if provided no other parameter is used for endpoint
+   * Change current page.
+   * @param page Changed pagination page
    */
-  assembleEndpoint(
+  changePage(page: number): void {
+    this.currentPage = page;
+    this._pageChange$.next(page);
+  }
+
+  /**
+   * Load data from API by specific endpoint.
+   * @param endpoint Specific endpoint
+   * @param page Current table page number
+   * @param pageSize Current table page size
+   * @param searchTerm Optional search term
+   */
+  private load(
     endpoint: string,
     page: number,
-    pageSize?: number,
+    pageSize: number,
     searchTerm?: string,
-  ): void {
-    let assembledEp = endpoint + '?' + `&page=${page}` + `&limit=${pageSize}`;
-    if (searchTerm) {
-      assembledEp = endpoint + `/?search=${searchTerm}`;
-    }
-    this.endpoint = assembledEp;
-  }
-
-  /**
-   * Either change amount of displayed data or use paging.
-   * Sends new API request.
-   * @param page Possible changed pagination page
-   */
-  pageThroughTable(page?: number): void {
-    let desiredPage: number = this.currentPage;
-    if (page) {
-      this.currentPage = page;
-      desiredPage = page;
+  ): Observable<SwApiResponse> {
+    let assembledEndpoint =
+      endpoint + '?' + `&page=${page}` + `&limit=${pageSize}`;
+    if (!!searchTerm) {
+      assembledEndpoint =
+        endpoint +
+        `?search=${searchTerm}` +
+        `&page=${page}` +
+        `&limit=${pageSize}`;
     }
 
-    this.assembleEndpoint(this._pplEndpoint, desiredPage, this.pageSize);
-    this.fetchDataFromApi();
-  }
-
-  fetchDataFromApi(): void {
-    this._http
-      .get(this.endpoint)
-      .pipe(pluck('results'), take(1))
-      .subscribe((swPeople: SwPerson[]) => {
-        this.isLoaded = true;
-        console.log('people', swPeople);
-        this.tableData = swPeople;
-      });
+    return this._http.get<SwApiResponse>(
+      assembledEndpoint,
+    ) as Observable<SwApiResponse>;
   }
 }
