@@ -1,72 +1,100 @@
-<div class="row p-2 mb-3">
-  <div class="col-4">
-    <div class="form-group">
-      <input
-        [formControl]="searchControl"
-        type="text"
-        class="form-control"
-        placeholder="Search by name"
-      />
-    </div>
-  </div>
-</div>
-
 <ng-container
   *ngIf="{
     isLoaded: isLoaded$ | async,
-    apiResponse: apiResponse$ | async
+    apiResponse: apiResponse$ | async,
+    currentEndpointSelection: currentEndpointSelection$ | async
   } as obj"
 >
+  <div class="row p-2 mb-3">
+    <div class="col-4">
+      <div class="form-group">
+        <input
+          [formControl]="searchControl"
+          type="text"
+          class="form-control"
+          placeholder="{{ obj.currentEndpointSelection.searchPhrase }}"
+        />
+      </div>
+    </div>
+
+    <div class="col-4">
+      <div class="row">
+        <div class="col-auto pt-2">
+          <label for="endpointSelect">What data do you want to see:</label>
+        </div>
+        <div class="col">
+          <div class="form-group">
+            <select
+              id="endpointSelect"
+              class="form-select"
+              style="width: auto"
+              [formControl]="endpointControl"
+            >
+              <option
+                *ngFor="let tableColConfig of tableConfig"
+                [ngValue]="tableColConfig"
+              >
+                {{ tableColConfig.endpointControlValue }}
+              </option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <table class="table p-2">
     <thead class="thead-dark">
       <tr>
         <th scope="col">#</th>
-        <th scope="col">Name</th>
-        <th scope="col">Birth</th>
-        <th scope="col">Home</th>
-        <th scope="col">Species</th>
-        <th scope="col">Movies</th>
-        <th scope="col">Url</th>
+        <th
+          *ngFor="let config of obj.currentEndpointSelection.columnConfig"
+          scope="col"
+        >
+          {{ config.columnTitle }}
+        </th>
       </tr>
     </thead>
     <tbody>
       <tr *ngIf="obj.isLoaded === false">
-        <td colspan="7">... is loading</td>
+        <td
+          [attr.colspan]="
+            obj.currentEndpointSelection?.columnConfig?.length + 1
+          "
+        >
+          ... is loading
+        </td>
       </tr>
       <tr
         *ngIf="obj.isLoaded === true && obj.apiResponse?.results?.length === 0"
       >
-        <td colspan="7">No data found</td>
+        <td
+          [attr.colspan]="
+            obj.currentEndpointSelection?.columnConfig?.length + 1
+          "
+        >
+          No data found
+        </td>
       </tr>
-      <tr *ngFor="let person of obj.apiResponse?.results; let i = index">
-        <th scope="row">{{ i + 1 }}</th>
-        <td>{{ person.name }}</td>
-        <td>{{ person.birth_year }}</td>
-        <td>
-          <sw-display-value
-            [endpoint]="person.homeworld"
-            [displayProperty]="'name'"
-          ></sw-display-value>
-        </td>
-        <td>
-          <sw-display-value
-            *ngFor="let species of person.species"
-            [endpoint]="species"
-            [displayProperty]="'name'"
-          ></sw-display-value>
-        </td>
-        <td>
-          <sw-display-value
-            *ngFor="let movie of person.films; last as isLast"
-            [isMultiple]="true"
-            [isLastMultiple]="isLast"
-            [endpoint]="movie"
-            [displayProperty]="'title'"
-          ></sw-display-value>
-        </td>
-
-        <td>{{ person.url }}</td>
-      </tr>
+      <ng-container
+        *ngIf="obj.isLoaded === true && obj.apiResponse?.results?.length > 0"
+      >
+        <tr *ngFor="let response of obj.apiResponse?.results; let i = index">
+          <th scope="row">{{ i + 1 }}</th>
+          <td *ngFor="let config of obj.currentEndpointSelection.columnConfig">
+            <ng-container
+              *ngTemplateOutlet="
+                valueTpl;
+                context: {
+                  response: response,
+                  config: config,
+                  standard: config.isValueUrl === false
+                }
+              "
+            ></ng-container>
+          </td>
+        </tr>
+      </ng-container>
     </tbody>
   </table>
 </ng-container>
@@ -85,3 +113,36 @@
     (clickedPage)="changePage($event)"
   ></sw-pagination>
 </div>
+
+<ng-template
+  #valueTpl
+  let-standard="standard"
+  let-response="response"
+  let-config="config"
+>
+  <div *ngIf="standard === true">
+    {{ response[config.columnDisplayProperty] }}
+  </div>
+
+  <div *ngIf="standard === false">
+    <ng-container *ngIf="config.isUrlMultiple === true">
+      <sw-display-value
+        *ngFor="
+          let elm of response[config.columnDisplayProperty];
+          last as isLast
+        "
+        [isMultiple]="config.isUrlMultiple"
+        [isLastMultiple]="isLast"
+        [endpoint]="elm"
+        [displayProperty]="config.urlDisplayProperty"
+      ></sw-display-value>
+    </ng-container>
+
+    <ng-container *ngIf="config.isUrlMultiple === false">
+      <sw-display-value
+        [endpoint]="response[config.columnDisplayProperty]"
+        [displayProperty]="config.urlDisplayProperty"
+      ></sw-display-value>
+    </ng-container>
+  </div>
+</ng-template>

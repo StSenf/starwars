@@ -1,7 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { SwApiResponse } from '../shared/model/interfaces';
-import { STANDARD_PAGE_SIZE } from '../shared/model/constants';
 import { FormControl } from '@angular/forms';
 import {
   BehaviorSubject,
@@ -14,21 +12,30 @@ import {
   tap,
 } from 'rxjs';
 
+import { SwApiResponse, SwTableConfig } from '../shared/model/interfaces';
+import { TABLE_CONFIG } from '../shared/model/table-config';
+import {
+  STANDARD_ENDPOINT_SELECTION,
+  STANDARD_PAGE_SIZE,
+} from '../shared/model/constants';
+
 @Component({
   selector: 'sw-plain-table',
   templateUrl: './sw-plain-table.component.html',
 })
 export class SwPlainTableComponent implements OnInit {
+  tableConfig: SwTableConfig[] = TABLE_CONFIG;
+  availableRecords: number;
+  isLimitEndpointActive = false; // ToDo: use switch in template to switch between endpoint type
+
   currentPageLimit: number = STANDARD_PAGE_SIZE;
   currentPage: number = 1;
+  currentEndpointSelection$ = new BehaviorSubject<SwTableConfig>(
+    STANDARD_ENDPOINT_SELECTION,
+  );
 
   apiResponse$: Observable<SwApiResponse>;
   isLoaded$ = new BehaviorSubject<boolean>(false);
-  availableRecords: number;
-
-  private _pplEndpoint: string = 'https://swapi.dev/api/people'; // -> limit does NOT work with this endpoint
-  // private _pplEndpoint: string = 'https://www.swapi.tech/api/people'; // -> limit works with this endpoint
-  isLimitEndpointActive = this._pplEndpoint.includes('.tech');
 
   searchControl: FormControl = new FormControl({
     value: '',
@@ -38,19 +45,26 @@ export class SwPlainTableComponent implements OnInit {
     value: this.currentPageLimit,
     disabled: this.isLimitEndpointActive === false,
   });
+  endpointControl: FormControl = new FormControl({
+    value: STANDARD_ENDPOINT_SELECTION,
+    disabled: false,
+  });
 
   private _pageChange$ = new BehaviorSubject<number>(this.currentPage);
   private _previousPageLimit: number;
   private _previousSearchTerm: string = '';
+  private _previousEndpointSelection: SwTableConfig;
 
   constructor(private _http: HttpClient) {}
 
   ngOnInit(): void {
+    // ToDo: on endpoint change, show spinner
     /**
      * Load table date on:
      *  - page change
      *  - page limit
      *  - search term change
+     *  - endpoint change
      */
     this.apiResponse$ = combineLatest([
       this._pageChange$,
@@ -60,10 +74,19 @@ export class SwPlainTableComponent implements OnInit {
         debounceTime(700),
         distinctUntilChanged(),
       ),
+      this.endpointControl.valueChanges.pipe(
+        startWith(STANDARD_ENDPOINT_SELECTION),
+        tap((selection: SwTableConfig) => {
+          this.currentEndpointSelection$.next(selection); // table head etc. must be re-rendered
+          this.isLoaded$.next(false); // show loading indicator
+          this.searchControl.setValue(''); // clear search input
+        }),
+      ),
     ]).pipe(
-      switchMap(([page, pageLimit, enteredInput]) => {
-        const isNewPageSize: boolean = pageLimit !== this._previousPageLimit;
-        if (isNewPageSize) {
+      switchMap(([page, pageLimit, enteredInput, endpointSelection]) => {
+        const isNewPageLimit: boolean = pageLimit !== this._previousPageLimit;
+        if (isNewPageLimit) {
+          console.log('new page limit', pageLimit);
           this.currentPage = 1; // if new page limit, pagination should switch to page one
           this.currentPageLimit = pageLimit;
           this._previousPageLimit = pageLimit;
@@ -72,12 +95,21 @@ export class SwPlainTableComponent implements OnInit {
         const isNewSearchTerm: boolean =
           enteredInput !== this._previousSearchTerm;
         if (isNewSearchTerm) {
+          console.log('new search term', enteredInput);
           this.currentPage = 1; // if new searchTerm, pagination should switch to page one
           this._previousSearchTerm = enteredInput;
         }
 
+        const isNewEndpointSelection: boolean =
+          endpointSelection !== this._previousEndpointSelection;
+        if (isNewEndpointSelection) {
+          console.log('new endpoint selection', endpointSelection);
+          this.currentPage = 1; // if new endpoint selection, pagination should switch to page one
+          this._previousEndpointSelection = endpointSelection;
+        }
+
         return this.load(
-          this._pplEndpoint,
+          endpointSelection.endpoint,
           this.currentPage,
           this.currentPageLimit,
           enteredInput,
