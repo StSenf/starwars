@@ -1,30 +1,44 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
-import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { HttpClient } from '@angular/common/http';
-
-interface SwTableItem {
-  name: string;
-  birth_year?: string;
-  url?: string;
-  home_world?: string;
-}
+import { SwApiResponse, SwPerson } from '../shared/model/interfaces';
+import {
+  BehaviorSubject,
+  combineLatest,
+  debounceTime,
+  distinctUntilChanged,
+  Observable,
+  startWith,
+  Subject,
+  switchMap,
+  takeUntil,
+} from 'rxjs';
+import { FormControl } from '@angular/forms';
 
 @Component({
   selector: 'sw-material-table',
   templateUrl: './sw-material-table.component.html',
   styleUrl: './sw-material-table.component.scss',
 })
-export class SwMaterialTableComponent implements OnInit {
+export class SwMaterialTableComponent implements OnInit, OnDestroy {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
-  @ViewChild(MatSort) sort!: MatSort;
-  @ViewChild(MatTable) table!: MatTable<SwTableItem>;
-  public dataSource: MatTableDataSource<SwTableItem>;
-  dataArray: SwTableItem[] = [];
+  @ViewChild(MatTable) table!: MatTable<SwPerson>;
 
   /** Columns displayed in the table. Columns IDs can be added, removed, or reordered. */
-  displayedColumns = ['name', 'url'];
+  public displayedColumns = ['name', 'birth_year', 'gender', 'url'];
+
+  public dataSource: MatTableDataSource<SwPerson>;
+  public availableRecords: number = 0;
+
+  searchControl = new FormControl({
+    value: '',
+    disabled: false,
+  });
+
+  private _currentPage = 1;
+  private _pageChange$ = new BehaviorSubject<number>(this._currentPage);
+  private _ngDestroy$ = new Subject();
 
   constructor(private _http: HttpClient) {}
 
@@ -32,15 +46,65 @@ export class SwMaterialTableComponent implements OnInit {
   // https://swapi.dev/api/people?page=1&limit=20 -> limit does NOT work with this endpoint
 
   ngOnInit(): void {
-    this._http
-      .get('https://www.swapi.tech/api/people?page=2&limit=20')
-      .subscribe((d: any) => {
-        console.log(d);
-        this.dataArray = d.results;
-        this.dataSource = new MatTableDataSource<SwTableItem>(this.dataArray);
-        this.dataSource.sort = this.sort;
-        this.dataSource.paginator = this.paginator;
+    // initial table set up
+    this.dataSource = new MatTableDataSource<SwPerson>([]);
+    this.dataSource.paginator = this.paginator;
+
+    /**
+     * Load table date on:
+     *  - page change
+     *  - search term change
+     */
+    combineLatest([
+      this._pageChange$,
+      this.searchControl.valueChanges.pipe(
+        startWith(''),
+        debounceTime(700),
+        distinctUntilChanged(),
+      ),
+    ])
+      .pipe(
+        switchMap(([desiredPage, enteredInput]) =>
+          this.load(`https://swapi.dev/api/people`, desiredPage, enteredInput),
+        ),
+        takeUntil(this._ngDestroy$),
+      )
+      .subscribe((resp: SwApiResponse) => {
+        console.log(resp);
+        this.availableRecords = resp.count | resp.total_records;
+        this.dataSource.data = resp.results as SwPerson[];
         this.table.dataSource = this.dataSource;
       });
+  }
+
+  ngOnDestroy(): void {
+    this._ngDestroy$.next(null);
+  }
+
+  changePage(event: PageEvent): void {
+    const desiredPage = event.pageIndex + 1;
+    this._currentPage = desiredPage;
+    this._pageChange$.next(desiredPage);
+  }
+
+  /**
+   * Load data from API by specific endpoint.
+   * @param endpoint Specific endpoint
+   * @param page Current table page number
+   * @param searchTerm Optional search term
+   */
+  private load(
+    endpoint: string,
+    page: number,
+    searchTerm?: string,
+  ): Observable<SwApiResponse> {
+    let assembledEndpoint = endpoint + '?' + `&page=${page}`;
+    if (!!searchTerm) {
+      assembledEndpoint = endpoint + `?search=${searchTerm}` + `&page=${page}`;
+    }
+
+    return this._http.get<SwApiResponse>(
+      assembledEndpoint,
+    ) as Observable<SwApiResponse>;
   }
 }
