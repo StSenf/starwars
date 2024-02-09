@@ -16,6 +16,7 @@ import { SwApiResponse, SwTableConfig } from '../shared/model/interfaces';
 import { TABLE_CONFIG } from '../shared/model/table-config';
 import {
   STANDARD_ENDPOINT_SELECTION,
+  STANDARD_LIMIT_ENDPOINT_CHOICE,
   STANDARD_PAGE_SIZE,
 } from '../shared/model/constants';
 
@@ -26,7 +27,6 @@ import {
 export class SwPlainTableComponent implements OnInit {
   tableConfig: SwTableConfig[] = TABLE_CONFIG;
   availableRecords: number;
-  isLimitEndpointActive = false; // ToDo: use switch in template to switch between endpoint type
 
   currentPageLimit: number = STANDARD_PAGE_SIZE;
   currentPage: number = 1;
@@ -39,14 +39,18 @@ export class SwPlainTableComponent implements OnInit {
 
   searchControl: FormControl = new FormControl({
     value: '',
-    disabled: this.isLimitEndpointActive === true,
+    disabled: false,
   });
   limitControl: FormControl = new FormControl({
     value: this.currentPageLimit,
-    disabled: this.isLimitEndpointActive === false,
+    disabled: false,
   });
   endpointControl: FormControl = new FormControl({
     value: STANDARD_ENDPOINT_SELECTION,
+    disabled: false,
+  });
+  limitEndpointControl: FormControl = new FormControl({
+    value: STANDARD_LIMIT_ENDPOINT_CHOICE,
     disabled: false,
   });
 
@@ -54,20 +58,24 @@ export class SwPlainTableComponent implements OnInit {
   private _previousPageLimit: number;
   private _previousSearchTerm: string = '';
   private _previousEndpointSelection: SwTableConfig;
+  private _previousLimitEndpointChoice: boolean;
 
   constructor(private _http: HttpClient) {}
 
   ngOnInit(): void {
-    // ToDo: on endpoint change, show spinner
     /**
      * Load table date on:
      *  - page change
-     *  - page limit
+     *  - limit endpoint (de)activation
+     *  - page limit change
      *  - search term change
      *  - endpoint change
      */
     this.apiResponse$ = combineLatest([
       this._pageChange$,
+      this.limitEndpointControl.valueChanges.pipe(
+        startWith(STANDARD_LIMIT_ENDPOINT_CHOICE),
+      ),
       this.limitControl.valueChanges.pipe(startWith(this.currentPageLimit)),
       this.searchControl.valueChanges.pipe(
         startWith(''),
@@ -78,48 +86,72 @@ export class SwPlainTableComponent implements OnInit {
         startWith(STANDARD_ENDPOINT_SELECTION),
         tap((selection: SwTableConfig) => {
           this.currentEndpointSelection$.next(selection); // table head etc. must be re-rendered
-          this.isLoaded$.next(false); // show loading indicator
+          this.isLoaded$.next(false); // show loading indicator again
           this.searchControl.setValue(''); // clear search input
         }),
       ),
     ]).pipe(
-      switchMap(([page, pageLimit, enteredInput, endpointSelection]) => {
-        const isNewPageLimit: boolean = pageLimit !== this._previousPageLimit;
-        if (isNewPageLimit) {
-          console.log('new page limit', pageLimit);
-          this.currentPage = 1; // if new page limit, pagination should switch to page one
-          this.currentPageLimit = pageLimit;
-          this._previousPageLimit = pageLimit;
-        }
-
-        const isNewSearchTerm: boolean =
-          enteredInput !== this._previousSearchTerm;
-        if (isNewSearchTerm) {
-          console.log('new search term', enteredInput);
-          this.currentPage = 1; // if new searchTerm, pagination should switch to page one
-          this._previousSearchTerm = enteredInput;
-        }
-
-        const isNewEndpointSelection: boolean =
-          endpointSelection !== this._previousEndpointSelection;
-        if (isNewEndpointSelection) {
-          console.log('new endpoint selection', endpointSelection);
-          this.currentPage = 1; // if new endpoint selection, pagination should switch to page one
-          this._previousEndpointSelection = endpointSelection;
-        }
-
-        return this.load(
-          endpointSelection.endpoint,
-          this.currentPage,
-          this.currentPageLimit,
+      switchMap(
+        ([
+          page,
+          isLimitEndpointActive,
+          pageLimit,
           enteredInput,
-        );
-      }),
+          endpointSelection,
+        ]) => {
+          const isNewPageLimit: boolean = pageLimit !== this._previousPageLimit;
+          if (isNewPageLimit) {
+            this.currentPage = 1; // if new page limit, pagination should switch to page one
+            this.currentPageLimit = pageLimit;
+            this._previousPageLimit = pageLimit;
+          }
+
+          const isNewSearchTerm: boolean =
+            enteredInput !== this._previousSearchTerm;
+          if (isNewSearchTerm) {
+            this.currentPage = 1; // if new searchTerm, pagination should switch to page one
+            this._previousSearchTerm = enteredInput;
+          }
+
+          const isNewEndpointSelection: boolean =
+            endpointSelection !== this._previousEndpointSelection;
+          if (isNewEndpointSelection) {
+            this.currentPage = 1; // if new endpoint selection, pagination should switch to page one
+            this._previousEndpointSelection = endpointSelection;
+          }
+
+          const isNewLimitEndpointChoice: boolean =
+            isLimitEndpointActive !== this._previousLimitEndpointChoice;
+          if (isNewLimitEndpointChoice) {
+            this.currentPage = 1; // if new limit endpoint choice, pagination should switch to page one
+            this.searchControl.setValue(''); // clear search input
+            this._previousLimitEndpointChoice = isLimitEndpointActive;
+
+            // change control status
+            const searchCtrlStatus = isLimitEndpointActive
+              ? 'disable'
+              : 'enable';
+            this.searchControl[searchCtrlStatus]();
+            const limitCtrlStatus = isLimitEndpointActive
+              ? 'enable'
+              : 'disable';
+            this.limitControl[limitCtrlStatus]();
+          }
+
+          return this.load(
+            isLimitEndpointActive === true
+              ? endpointSelection.limitEndpoint
+              : endpointSelection.endpoint,
+            this.currentPage,
+            this.currentPageLimit,
+            enteredInput,
+          );
+        },
+      ),
       tap((response: SwApiResponse) => {
         this.isLoaded$.next(!!response);
         this.availableRecords = response.count || response.total_records;
-        console.log('random api response subscription', response);
-        console.log('this.availableRecords', this.availableRecords);
+        console.log('api response', response);
       }),
     );
   }
