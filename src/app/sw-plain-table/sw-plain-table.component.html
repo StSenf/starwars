@@ -105,8 +105,9 @@
     style="width: auto; margin-right: 1rem"
     [formControl]="limitControl"
   >
-    <option [ngValue]="5">5 items per page</option>
-    <option [ngValue]="10">10 items per page</option>
+    <option *ngFor="let option of pageLimitConfig" [ngValue]="option.value">
+      {{ option.displayValue }}
+    </option>
   </select>
 
   <div class="form-check form-switch">
@@ -144,12 +145,7 @@
   <div *ngIf="standard === false">
     <ng-container *ngIf="config.isUrlMultiple === true">
       <sw-display-value
-        *ngFor="
-          let elm of response[config.columnDisplayProperty];
-          last as isLast
-        "
-        [isMultiple]="config.isUrlMultiple"
-        [isLastMultiple]="isLast"
+        *ngFor="let elm of response[config.columnDisplayProperty]"
         [endpoint]="elm"
         [displayProperty]="config.urlDisplayProperty"
       ></sw-display-value>

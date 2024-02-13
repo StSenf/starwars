@@ -14,7 +14,7 @@ import {
   Subject,
   takeUntil,
 } from 'rxjs';
-import { STANDARD_PAGE_SIZE } from '../model/constants';
+import { STANDARD_PAGE_LIMIT } from '../model/constants';
 import { map } from 'rxjs/operators';
 
 /**
@@ -44,7 +44,7 @@ export class SwPaginationComponent implements OnInit, OnDestroy {
 
   availablePagesCount$: Observable<number>;
 
-  private _pageSize$ = new BehaviorSubject<number>(STANDARD_PAGE_SIZE);
+  private _pageSize$ = new BehaviorSubject<number>(STANDARD_PAGE_LIMIT);
   private _availableRecords$ = new BehaviorSubject<number>(10);
   private _ngDestroy$ = new Subject();
 

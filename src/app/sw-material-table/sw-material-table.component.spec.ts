@@ -1,11 +1,13 @@
-import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { MatPaginatorModule } from '@angular/material/paginator';
-import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { ReactiveFormsModule } from '@angular/forms';
+import { MatInputModule } from '@angular/material/input';
 
 import { SwMaterialTableComponent } from './sw-material-table.component';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 describe('SwMaterialTableComponent', () => {
   let component: SwMaterialTableComponent;
@@ -17,8 +19,10 @@ describe('SwMaterialTableComponent', () => {
       imports: [
         NoopAnimationsModule,
         MatPaginatorModule,
-        MatSortModule,
         MatTableModule,
+        ReactiveFormsModule,
+        MatFormFieldModule,
+        MatInputModule,
         HttpClientTestingModule,
       ],
     }).compileComponents();

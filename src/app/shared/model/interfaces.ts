@@ -22,10 +22,17 @@ export interface SwTableColConfig {
   columnTitle: string;
   /** True if the property value is a URL/endpoint. */
   isValueUrl: boolean;
-  /** Property of the URL/endpoint response that should be displayed in each cell (if property value is URL) */
-  urlDisplayProperty?: string;
   /** True if an array of urls/endpoints is handed back (if property value is a URL) */
   isUrlMultiple?: boolean;
+  /** Property of the URL/endpoint response that should be displayed in each cell (if property value is URL) */
+  urlDisplayProperty?: string;
+}
+
+export interface PageLimitOptions {
+  /** Value that is shown in template. */
+  displayValue: string;
+  /** Value that is used for endpoint call. */
+  value: number;
 }
 
 export interface SwApiResponse {

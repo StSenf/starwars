@@ -32,15 +32,6 @@ export class SwDisplayValueComponent implements OnInit {
   /** Property that should be plucked from the endpoint response. */
   @Input() displayProperty: string;
 
-  /**
-   * If set to true, multiple elements will be rendered to template.
-   * A separator must be rendered to template then.
-   */
-  @Input() isMultiple?: boolean = false;
-
-  /** If set to true, the last multiple element should not have separator in template. */
-  @Input() isLastMultiple?: boolean = false;
-
   displayValue: string;
   isRequestCompleted: boolean = false; // otherwise the comma separators are visible before the display value gets loaded
 
