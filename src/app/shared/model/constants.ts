@@ -21,4 +21,4 @@ export const PAGE_LIMIT_OPTIONS: PageLimitOptions[] = [
   },
 ];
 export const STANDARD_LIMIT_ENDPOINT_CHOICE = false;
-export const STANDARD_ENDPOINT_SELECTION: SwTableConfig = TABLE_CONFIG[0];
+export const STANDARD_TABLE_CONFIG: SwTableConfig = TABLE_CONFIG[1];

@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { FormControl } from '@angular/forms';
 import {
   BehaviorSubject,
@@ -20,14 +19,17 @@ import {
 import { TABLE_CONFIG } from '../shared/model/table-config';
 import {
   PAGE_LIMIT_OPTIONS,
-  STANDARD_ENDPOINT_SELECTION,
   STANDARD_LIMIT_ENDPOINT_CHOICE,
   STANDARD_PAGE_LIMIT,
+  STANDARD_TABLE_CONFIG,
 } from '../shared/model/constants';
+import { LoadingStateService } from '../services/loading-state.service';
+import { SwapiService } from '../services/swapi.service';
 
 @Component({
   selector: 'sw-plain-table',
   templateUrl: './sw-plain-table.component.html',
+  styleUrls: ['sw-plain-table.component.scss'],
 })
 export class SwPlainTableComponent implements OnInit {
   tableConfig: SwTableConfig[] = TABLE_CONFIG;
@@ -36,12 +38,14 @@ export class SwPlainTableComponent implements OnInit {
 
   currentPageLimit: number = STANDARD_PAGE_LIMIT;
   currentPage: number = 1;
-  currentEndpointSelection$ = new BehaviorSubject<SwTableConfig>(
-    STANDARD_ENDPOINT_SELECTION,
+  currentTableConfig$ = new BehaviorSubject<SwTableConfig>(
+    STANDARD_TABLE_CONFIG,
   );
 
   apiResponse$: Observable<SwApiResponse>;
   isLoaded$ = new BehaviorSubject<boolean>(false);
+  isEndpointListEmpty$: Observable<boolean>;
+  areAllEndpointsLoaded$: Observable<boolean>;
 
   searchControl: FormControl = new FormControl({
     value: '',
@@ -51,8 +55,8 @@ export class SwPlainTableComponent implements OnInit {
     value: this.currentPageLimit,
     disabled: true,
   });
-  endpointControl: FormControl = new FormControl({
-    value: STANDARD_ENDPOINT_SELECTION,
+  tableConfigControl: FormControl = new FormControl({
+    value: STANDARD_TABLE_CONFIG,
     disabled: false,
   });
   limitEndpointControl: FormControl = new FormControl({
@@ -63,13 +67,23 @@ export class SwPlainTableComponent implements OnInit {
   private _pageChange$ = new BehaviorSubject<number>(this.currentPage);
   private _previousPageLimit: number;
   private _previousSearchTerm: string = '';
-  private _previousEndpointSelection: SwTableConfig;
+  private _previousTableConfig: SwTableConfig;
   private _previousLimitEndpointChoice: boolean =
     STANDARD_LIMIT_ENDPOINT_CHOICE;
 
-  constructor(private _http: HttpClient) {}
+  constructor(
+    private _loadingStateService: LoadingStateService,
+    private _swapiService: SwapiService,
+  ) {}
 
   ngOnInit(): void {
+    this.isEndpointListEmpty$ = this._loadingStateService.isEndpointListEmpty();
+    this.areAllEndpointsLoaded$ =
+      this._loadingStateService.areAllEndpointsLoaded();
+    // this._loadingStateService.endpointLoadingList$.subscribe((list) =>
+    //   console.log('loading list', list),
+    // );
+
     /**
      * Load table date on:
      *  - page change
@@ -89,10 +103,10 @@ export class SwPlainTableComponent implements OnInit {
         debounceTime(700),
         distinctUntilChanged(),
       ),
-      this.endpointControl.valueChanges.pipe(
-        startWith(STANDARD_ENDPOINT_SELECTION),
-        tap((selection: SwTableConfig) => {
-          this.currentEndpointSelection$.next(selection); // table head etc. must be re-rendered
+      this.tableConfigControl.valueChanges.pipe(
+        startWith(STANDARD_TABLE_CONFIG),
+        tap((tableConfigSelection: SwTableConfig) => {
+          this.currentTableConfig$.next(tableConfigSelection); // table head etc. must be re-rendered
           this.isLoaded$.next(false); // show loading indicator again
           this.searchControl.setValue(''); // clear search input
         }),
@@ -104,7 +118,7 @@ export class SwPlainTableComponent implements OnInit {
           isLimitEndpointActive,
           pageLimit,
           enteredInput,
-          endpointSelection,
+          tableConfigSelection,
         ]) => {
           const isNewPageLimit: boolean = pageLimit !== this._previousPageLimit;
           if (isNewPageLimit) {
@@ -120,11 +134,11 @@ export class SwPlainTableComponent implements OnInit {
             this._previousSearchTerm = enteredInput;
           }
 
-          const isNewEndpointSelection: boolean =
-            endpointSelection !== this._previousEndpointSelection;
-          if (isNewEndpointSelection) {
-            this.currentPage = 1; // if new endpoint selection, pagination should switch to page one
-            this._previousEndpointSelection = endpointSelection;
+          const isNewTableConfigSelection: boolean =
+            tableConfigSelection !== this._previousTableConfig;
+          if (isNewTableConfigSelection) {
+            this.currentPage = 1; // if new config selection, pagination should switch to page one
+            this._previousTableConfig = tableConfigSelection;
           }
 
           const isNewLimitEndpointChoice: boolean =
@@ -134,7 +148,8 @@ export class SwPlainTableComponent implements OnInit {
               isLimitEndpointActive === false &&
               this.currentPageLimit !== STANDARD_PAGE_LIMIT
             ) {
-              // must reset to standard limit, otherwise pagination will not change to correct pages
+              // if control is not active we must reset to standard limit
+              // otherwise pagination will not change to correct pages
               this.currentPageLimit = STANDARD_PAGE_LIMIT;
               this.limitControl.setValue(STANDARD_PAGE_LIMIT);
             }
@@ -153,10 +168,11 @@ export class SwPlainTableComponent implements OnInit {
             this.limitControl[limitCtrlStatus]();
           }
 
-          return this.load(
+          return this._swapiService.getTableData(
+            tableConfigSelection,
             isLimitEndpointActive === true
-              ? endpointSelection.limitEndpoint
-              : endpointSelection.endpoint,
+              ? tableConfigSelection.limitEndpoint
+              : tableConfigSelection.endpoint,
             this.currentPage,
             this.currentPageLimit,
             enteredInput,
@@ -178,33 +194,5 @@ export class SwPlainTableComponent implements OnInit {
   changePage(page: number): void {
     this.currentPage = page;
     this._pageChange$.next(page);
-  }
-
-  /**
-   * Load data from API by specific endpoint.
-   * @param endpoint Specific endpoint
-   * @param page Current table page number
-   * @param pageLimit Current table page limit
-   * @param searchTerm Optional search term
-   */
-  private load(
-    endpoint: string,
-    page: number,
-    pageLimit: number,
-    searchTerm?: string,
-  ): Observable<SwApiResponse> {
-    let assembledEndpoint =
-      endpoint + '?' + `&page=${page}` + `&limit=${pageLimit}`;
-    if (!!searchTerm) {
-      assembledEndpoint =
-        endpoint +
-        `?search=${searchTerm}` +
-        `&page=${page}` +
-        `&limit=${pageLimit}`;
-    }
-
-    return this._http.get<SwApiResponse>(
-      assembledEndpoint,
-    ) as Observable<SwApiResponse>;
   }
 }

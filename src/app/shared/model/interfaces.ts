@@ -5,8 +5,8 @@ export interface SwTableConfig {
   limitEndpoint?: string;
   /** Phrase that is visible in search input. */
   searchPhrase: string;
-  /** Value that is visible in endpoint select field. */
-  endpointControlValue: string;
+  /** Value that is visible in the select field. */
+  tableConfigControlValue: string;
   /** Column configuration. Length determines the amount of columns. */
   columnConfig: SwTableColConfig[];
 }
@@ -16,15 +16,15 @@ export interface SwTableConfig {
  * Depending on this configuration specific elements will be rendered to template.
  */
 export interface SwTableColConfig {
-  /** Api property that should be displayed in table col */
+  /** Property of the API response that should be displayed in table column e.g. "diameter". */
   columnDisplayProperty: string;
-  /** Title of the table col */
+  /** Title of the table col e.g. "Diameter in meter". */
   columnTitle: string;
-  /** True if the property value is a URL/endpoint. */
-  isValueUrl: boolean;
-  /** True if an array of urls/endpoints is handed back (if property value is a URL) */
+  /** True if the value of the column's cells is a URL/endpoint. */
+  areCellValuesUrl: boolean;
+  /** True if an array of urls/endpoints is handed back as cell value. */
   isUrlMultiple?: boolean;
-  /** Property of the URL/endpoint response that should be displayed in each cell (if property value is URL) */
+  /** Property of the URL/endpoint response that should be displayed in each cell (if property value is URL) e.g. "title" */
   urlDisplayProperty?: string;
 }
 
@@ -38,8 +38,8 @@ export interface PageLimitOptions {
 export interface SwApiResponse {
   count?: number; // swapi.dev specific
   total_records?: number; // swapi.tech specific
-  next: string;
-  previous: string;
+  next?: string;
+  previous?: string;
   results:
     | SwPerson[]
     | SwPlanet[]
