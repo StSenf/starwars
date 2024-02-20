@@ -5,6 +5,7 @@ import {
   LoadingStatus,
   StatusEntry,
 } from '../shared/model/loading-state.interfaces';
+import { STANDARD_STABLE_TEMPLATE_CHOICE } from '../shared/model/constants';
 
 /**
  * Reason for this service:
@@ -33,6 +34,9 @@ import {
 export class LoadingStateService {
   private _endpointLoadingList$ = new BehaviorSubject<StatusEntry[]>([]);
   private _endpointLoadingList: StatusEntry[] = [];
+  private _isLoadingStateActive$ = new BehaviorSubject<boolean>(
+    STANDARD_STABLE_TEMPLATE_CHOICE,
+  );
 
   /** Creates new endpoint loading list */
   createEndpointLoadingList(list: StatusEntry[]): void {
@@ -61,6 +65,21 @@ export class LoadingStateService {
       this._endpointLoadingList[desiredElmIdx] = changeElm;
       this._endpointLoadingList$.next(this._endpointLoadingList);
     }
+  }
+
+  /**
+   * Returns true if loading state is active.
+   */
+  isLoadingStateActive(): Observable<boolean> {
+    return this._isLoadingStateActive$;
+  }
+
+  /**
+   * Changes if loading state is active (= true) or inactive (= false).
+   * @param isActive
+   */
+  changeIsLoadingStateActive(isActive: boolean): void {
+    this._isLoadingStateActive$.next(isActive);
   }
 
   /**

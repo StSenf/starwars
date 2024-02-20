@@ -15,6 +15,7 @@ import { SwDisplayValueComponent } from './shared/sw-display-value/sw-display-va
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SwPaginationComponent } from './shared/sw-pagination/sw-pagination.component';
 import { AppRoutingModule } from './app-routing.module';
+import { SwLoadingStateToggleComponent } from './shared/sw-loading-state-toggle/sw-loading-state-toggle.component';
 
 @NgModule({
   declarations: [
@@ -23,6 +24,7 @@ import { AppRoutingModule } from './app-routing.module';
     SwMaterialTableComponent,
     SwPaginationComponent,
     SwPlainTableComponent,
+    SwLoadingStateToggleComponent,
   ],
   imports: [
     BrowserAnimationsModule,

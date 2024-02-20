@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import {
   BehaviorSubject,
@@ -7,7 +7,9 @@ import {
   distinctUntilChanged,
   Observable,
   startWith,
+  Subject,
   switchMap,
+  takeUntil,
   tap,
 } from 'rxjs';
 
@@ -21,6 +23,7 @@ import {
   PAGE_LIMIT_OPTIONS,
   STANDARD_LIMIT_ENDPOINT_CHOICE,
   STANDARD_PAGE_LIMIT,
+  STANDARD_STABLE_TEMPLATE_CHOICE,
   STANDARD_TABLE_CONFIG,
 } from '../shared/model/constants';
 import { LoadingStateService } from '../services/loading-state.service';
@@ -31,7 +34,7 @@ import { SwapiService } from '../services/swapi.service';
   templateUrl: './sw-plain-table.component.html',
   styleUrls: ['sw-plain-table.component.scss'],
 })
-export class SwPlainTableComponent implements OnInit {
+export class SwPlainTableComponent implements OnInit, OnDestroy {
   tableConfig: SwTableConfig[] = TABLE_CONFIG;
   pageLimitConfig: PageLimitOptions[] = PAGE_LIMIT_OPTIONS;
   availableRecords: number;
@@ -46,12 +49,13 @@ export class SwPlainTableComponent implements OnInit {
   isLoaded$ = new BehaviorSubject<boolean>(false);
   isEndpointListEmpty$: Observable<boolean>;
   areAllEndpointsLoaded$: Observable<boolean>;
+  isEndpointsLoadingListActive$: Observable<boolean>;
 
   searchControl: FormControl = new FormControl({
     value: '',
     disabled: false,
   });
-  limitControl: FormControl = new FormControl({
+  pageLimitControl: FormControl = new FormControl({
     value: this.currentPageLimit,
     disabled: true,
   });
@@ -63,7 +67,12 @@ export class SwPlainTableComponent implements OnInit {
     value: STANDARD_LIMIT_ENDPOINT_CHOICE,
     disabled: false,
   });
+  loadingStateToggle: FormControl = new FormControl({
+    value: STANDARD_STABLE_TEMPLATE_CHOICE,
+    disabled: false,
+  });
 
+  private _onDestroy = new Subject<any>();
   private _pageChange$ = new BehaviorSubject<number>(this.currentPage);
   private _previousPageLimit: number;
   private _previousSearchTerm: string = '';
@@ -78,11 +87,16 @@ export class SwPlainTableComponent implements OnInit {
 
   ngOnInit(): void {
     this.isEndpointListEmpty$ = this._loadingStateService.isEndpointListEmpty();
+    this.isEndpointsLoadingListActive$ =
+      this._loadingStateService.isLoadingStateActive();
     this.areAllEndpointsLoaded$ =
       this._loadingStateService.areAllEndpointsLoaded();
-    // this._loadingStateService.endpointLoadingList$.subscribe((list) =>
-    //   console.log('loading list', list),
-    // );
+
+    this.loadingStateToggle.valueChanges
+      .pipe(takeUntil(this._onDestroy))
+      .subscribe((newState: boolean) => {
+        this._loadingStateService.changeIsLoadingStateActive(newState);
+      });
 
     /**
      * Load table date on:
@@ -97,7 +111,7 @@ export class SwPlainTableComponent implements OnInit {
       this.limitEndpointControl.valueChanges.pipe(
         startWith(STANDARD_LIMIT_ENDPOINT_CHOICE),
       ),
-      this.limitControl.valueChanges.pipe(startWith(this.currentPageLimit)),
+      this.pageLimitControl.valueChanges.pipe(startWith(this.currentPageLimit)),
       this.searchControl.valueChanges.pipe(
         startWith(''),
         debounceTime(700),
@@ -120,6 +134,7 @@ export class SwPlainTableComponent implements OnInit {
           enteredInput,
           tableConfigSelection,
         ]) => {
+          console.log('isLimitEndpointActive', isLimitEndpointActive);
           const isNewPageLimit: boolean = pageLimit !== this._previousPageLimit;
           if (isNewPageLimit) {
             this.currentPage = 1; // if new page limit, pagination should switch to page one
@@ -151,7 +166,7 @@ export class SwPlainTableComponent implements OnInit {
               // if control is not active we must reset to standard limit
               // otherwise pagination will not change to correct pages
               this.currentPageLimit = STANDARD_PAGE_LIMIT;
-              this.limitControl.setValue(STANDARD_PAGE_LIMIT);
+              this.pageLimitControl.setValue(STANDARD_PAGE_LIMIT);
             }
             this.currentPage = 1; // if new limit endpoint choice, pagination should switch to page one
             this.searchControl.setValue(''); // clear search input
@@ -165,7 +180,7 @@ export class SwPlainTableComponent implements OnInit {
             const limitCtrlStatus = isLimitEndpointActive
               ? 'enable'
               : 'disable';
-            this.limitControl[limitCtrlStatus]();
+            this.pageLimitControl[limitCtrlStatus]();
           }
 
           return this._swapiService.getTableData(
@@ -185,6 +200,10 @@ export class SwPlainTableComponent implements OnInit {
         console.log('api response', response);
       }),
     );
+  }
+
+  ngOnDestroy(): void {
+    this._onDestroy.next(null);
   }
 
   /**
