@@ -106,7 +106,7 @@
 <div class="d-flex align-items-center p-2">
   <select
     class="form-select"
-    style="width: auto; margin-right: 1rem"
+    style="width: auto"
     [formControl]="pageLimitControl"
   >
     <option *ngFor="let option of pageLimitConfig" [ngValue]="option.value">
@@ -117,13 +117,13 @@
   <sw-loading-state-toggle
     [labelText]="'Activate limit endpoints'"
     [formControl]="limitEndpointControl"
-    style="margin-left: 1rem"
+    class="ms-3"
   ></sw-loading-state-toggle>
 
   <sw-loading-state-toggle
     [labelText]="'Activate stable template rendering'"
     [formControl]="loadingStateToggle"
-    style="margin-left: 1rem"
+    class="ms-3"
   ></sw-loading-state-toggle>
 
   <sw-pagination
