@@ -8,7 +8,12 @@
     type="checkbox"
     id="{{ randomId }}"
   />
-  <label class="form-check-label" for="{{ randomId }}">
+  <label
+    class="form-check-label"
+    for="{{ randomId }}"
+    placement="top"
+    ngbTooltip="{{ tooltipText }}"
+  >
     {{ labelText }}
   </label>
 </div>

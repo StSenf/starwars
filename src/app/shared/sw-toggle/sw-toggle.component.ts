@@ -2,19 +2,22 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { Component, forwardRef, Input } from '@angular/core';
 
 @Component({
-  selector: 'sw-loading-state-toggle',
-  templateUrl: './sw-loading-state-toggle.component.html',
+  selector: 'sw-toggle',
+  templateUrl: './sw-toggle.component.html',
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
       multi: true,
-      useExisting: forwardRef(() => SwLoadingStateToggleComponent),
+      useExisting: forwardRef(() => SwToggleComponent),
     },
   ],
 })
-export class SwLoadingStateToggleComponent implements ControlValueAccessor {
+export class SwToggleComponent implements ControlValueAccessor {
   /** Text that stands on the right, next to the switch. */
   @Input() labelText: string;
+
+  /** Text that is presented in tooltip. Hover label text to activate the tooltip. */
+  @Input() tooltipText: string;
 
   onChange: (value: any) => void = () => {};
   onTouched: () => void = () => {};

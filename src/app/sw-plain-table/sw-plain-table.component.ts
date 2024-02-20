@@ -65,7 +65,7 @@ export class SwPlainTableComponent implements OnInit, OnDestroy {
   });
   limitEndpointControl: FormControl = new FormControl({
     value: STANDARD_LIMIT_ENDPOINT_CHOICE,
-    disabled: false,
+    disabled: true,
   });
   loadingStateToggle: FormControl = new FormControl({
     value: STANDARD_STABLE_TEMPLATE_CHOICE,
