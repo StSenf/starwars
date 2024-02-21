@@ -26,6 +26,11 @@ export interface SwTableColConfig {
   isUrlMultiple?: boolean;
   /** Property of the URL/endpoint response that should be displayed in each cell (if property value is URL) e.g. "title" */
   urlDisplayProperty?: string;
+  /**
+   * If set to true, this column will be sortable.
+   * Note: only columns that don't consist of urls should be sortable.
+   */
+  isSortable?: boolean;
 }
 
 export interface PageLimitOptions {
@@ -33,6 +38,18 @@ export interface PageLimitOptions {
   displayValue: string;
   /** Value that is used for endpoint call. */
   value: number;
+}
+
+export enum SortDirection {
+  ASC = 'asc',
+  DESC = 'desc',
+}
+
+export interface ColumnSorting {
+  /** The column name (columnDisplayProperty) the table is sorted after. */
+  colName?: string;
+  /** Sort direction. */
+  direction?: SortDirection;
 }
 
 export interface SwApiResponse {

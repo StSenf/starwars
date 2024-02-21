@@ -16,6 +16,7 @@ import { SwDisplayValueComponent } from './shared/sw-display-value/sw-display-va
 import { SwToggleComponent } from './shared/sw-toggle/sw-toggle.component';
 import { SwPaginationComponent } from './shared/sw-pagination/sw-pagination.component';
 import { SwMaterialTableComponent } from './sw-material-table/sw-material-table.component';
+import { SwSortComponent } from './sw-plain-table/sorting/sw-sort.component';
 import { SwPlainTableComponent } from './sw-plain-table/sw-plain-table.component';
 
 @NgModule({
@@ -26,6 +27,7 @@ import { SwPlainTableComponent } from './sw-plain-table/sw-plain-table.component
     SwPaginationComponent,
     SwPlainTableComponent,
     SwToggleComponent,
+    SwSortComponent,
   ],
   imports: [
     BrowserAnimationsModule,

@@ -12,22 +12,27 @@ import {
   takeUntil,
   tap,
 } from 'rxjs';
-
-import {
-  PageLimitOptions,
-  SwApiResponse,
-  SwTableConfig,
-} from '../shared/model/interfaces';
-import { TABLE_CONFIG } from '../shared/model/table-config';
+import { map } from 'rxjs/operators';
+import { LoadingStateService } from '../services/loading-state.service';
+import { SwapiService } from '../services/swapi.service';
 import {
   PAGE_LIMIT_OPTIONS,
   STANDARD_LIMIT_ENDPOINT_CHOICE,
   STANDARD_PAGE_LIMIT,
+  STANDARD_SORT_DIRECTION,
   STANDARD_STABLE_TEMPLATE_CHOICE,
   STANDARD_TABLE_CONFIG,
 } from '../shared/model/constants';
-import { LoadingStateService } from '../services/loading-state.service';
-import { SwapiService } from '../services/swapi.service';
+
+import {
+  ColumnSorting,
+  PageLimitOptions,
+  SortDirection,
+  SwApiResponse,
+  SwTableColConfig,
+  SwTableConfig,
+} from '../shared/model/interfaces';
+import { TABLE_CONFIG } from '../shared/model/table-config';
 
 @Component({
   selector: 'sw-plain-table',
@@ -43,6 +48,9 @@ export class SwPlainTableComponent implements OnInit, OnDestroy {
   currentPage: number = 1;
   currentTableConfig$ = new BehaviorSubject<SwTableConfig>(
     STANDARD_TABLE_CONFIG,
+  );
+  currentColumnSorting$ = new BehaviorSubject<ColumnSorting>(
+    this.searchFirstSortableColumn(STANDARD_TABLE_CONFIG),
   );
 
   apiResponse$: Observable<SwApiResponse>;
@@ -65,10 +73,10 @@ export class SwPlainTableComponent implements OnInit, OnDestroy {
   });
   limitEndpointControl: FormControl = new FormControl({
     value: STANDARD_LIMIT_ENDPOINT_CHOICE,
-    disabled: true,
+    disabled: false,
   });
   loadingStateToggle: FormControl = new FormControl({
-    value: STANDARD_STABLE_TEMPLATE_CHOICE,
+    value: STANDARD_STABLE_TEMPLATE_CHOICE, // ToDo: with sorting the loading state correspondingRowIndex is messed up
     disabled: false,
   });
 
@@ -104,7 +112,8 @@ export class SwPlainTableComponent implements OnInit, OnDestroy {
      *  - limit endpoint (de)activation
      *  - page limit change
      *  - search term change
-     *  - endpoint change
+     *  - sorting change
+     *  - table config change
      */
     this.apiResponse$ = combineLatest([
       this._pageChange$,
@@ -117,12 +126,16 @@ export class SwPlainTableComponent implements OnInit, OnDestroy {
         debounceTime(700),
         distinctUntilChanged(),
       ),
+      this.currentColumnSorting$,
       this.tableConfigControl.valueChanges.pipe(
         startWith(STANDARD_TABLE_CONFIG),
         tap((tableConfigSelection: SwTableConfig) => {
           this.currentTableConfig$.next(tableConfigSelection); // table head etc. must be re-rendered
           this.isLoaded$.next(false); // show loading indicator again
           this.searchControl.setValue(''); // clear search input
+          this.currentColumnSorting$.next(
+            this.searchFirstSortableColumn(tableConfigSelection),
+          ); // change col sorting as there might be no sortable columns in the new table config
         }),
       ),
     ]).pipe(
@@ -132,9 +145,9 @@ export class SwPlainTableComponent implements OnInit, OnDestroy {
           isLimitEndpointActive,
           pageLimit,
           enteredInput,
+          columnSorting,
           tableConfigSelection,
         ]) => {
-          console.log('isLimitEndpointActive', isLimitEndpointActive);
           const isNewPageLimit: boolean = pageLimit !== this._previousPageLimit;
           if (isNewPageLimit) {
             this.currentPage = 1; // if new page limit, pagination should switch to page one
@@ -183,15 +196,21 @@ export class SwPlainTableComponent implements OnInit, OnDestroy {
             this.pageLimitControl[limitCtrlStatus]();
           }
 
-          return this._swapiService.getTableData(
-            tableConfigSelection,
-            isLimitEndpointActive === true
-              ? tableConfigSelection.limitEndpoint
-              : tableConfigSelection.endpoint,
-            this.currentPage,
-            this.currentPageLimit,
-            enteredInput,
-          );
+          return this._swapiService
+            .getTableData(
+              tableConfigSelection,
+              isLimitEndpointActive === true
+                ? tableConfigSelection.limitEndpoint
+                : tableConfigSelection.endpoint,
+              this.currentPage,
+              this.currentPageLimit,
+              enteredInput,
+            )
+            .pipe(
+              map((response: SwApiResponse) =>
+                this.sortResponseResults(response, columnSorting),
+              ),
+            );
         },
       ),
       tap((response: SwApiResponse) => {
@@ -208,10 +227,73 @@ export class SwPlainTableComponent implements OnInit, OnDestroy {
 
   /**
    * Change current page.
-   * @param page Changed pagination page
+   * @param page Desired page
    */
   changePage(page: number): void {
     this.currentPage = page;
     this._pageChange$.next(page);
+  }
+
+  /**
+   * Change the current column sorting.
+   * @param sorting Desired sorting
+   */
+  sortColumn(sorting: ColumnSorting): void {
+    this.currentColumnSorting$.next({
+      colName: sorting.colName,
+      direction: sorting.direction,
+    });
+  }
+
+  /**
+   * Returns column sorting object with the first found sortable column of the table configuration.
+   * If none found, and empty object is returned.
+   * @param tableConfig Current table config
+   */
+  searchFirstSortableColumn(tableConfig: SwTableConfig): ColumnSorting {
+    const firstSortableCol: SwTableColConfig = tableConfig.columnConfig.find(
+      (elm: SwTableColConfig) => elm.isSortable === true,
+    );
+
+    return firstSortableCol
+      ? {
+          colName: firstSortableCol.columnDisplayProperty,
+          direction: STANDARD_SORT_DIRECTION,
+        }
+      : {};
+  }
+
+  /**
+   * Returns the response with sorted results.
+   * @param response API response object
+   * @param columnSorting Current column sorting e.g. { colName: "title", direction: "desc" }
+   */
+  sortResponseResults(
+    response: SwApiResponse,
+    columnSorting: ColumnSorting,
+  ): SwApiResponse {
+    if (!!columnSorting === false) {
+      // return immediately if no sorting provided
+      return response;
+    }
+
+    const isDirectionAsc: boolean =
+      columnSorting.direction === SortDirection.ASC;
+
+    const sortedResults = response.results.sort((a, b) => {
+      const elmA = a[columnSorting.colName];
+      const elmB = b[columnSorting.colName];
+      if (elmA < elmB) {
+        return isDirectionAsc ? -1 : 1;
+      }
+      if (elmA > elmB) {
+        return isDirectionAsc ? 1 : -1;
+      }
+
+      // must be equal
+      return 0;
+    });
+
+    return { ...response, results: sortedResults };
   }
 }

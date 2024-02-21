@@ -4,7 +4,8 @@
     apiResponse: apiResponse$ | async,
     currentTableConfig: currentTableConfig$ | async,
     areAllEndpointsLoaded: areAllEndpointsLoaded$ | async,
-    isEndpointsLoadingListActive: isEndpointsLoadingListActive$ | async
+    isEndpointsLoadingListActive: isEndpointsLoadingListActive$ | async,
+    currentColumnSorting: currentColumnSorting$ | async
   } as obj"
 >
   <div class="row p-2 mb-3">
@@ -50,10 +51,16 @@
       <tr>
         <th scope="col">#</th>
         <th
-          *ngFor="let config of obj.currentTableConfig.columnConfig"
+          *ngFor="let colConfig of obj.currentTableConfig.columnConfig"
           scope="col"
         >
-          {{ config.columnTitle }}
+          {{ colConfig.columnTitle }}
+          <sw-sort
+            *ngIf="colConfig.isSortable"
+            [currentColumnSorting]="obj.currentColumnSorting"
+            [columnSortConfig]="{ colName: colConfig.columnDisplayProperty }"
+            (sorted)="sortColumn($event)"
+          ></sw-sort>
         </th>
       </tr>
     </thead>
