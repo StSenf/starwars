@@ -1,5 +1,4 @@
-import { Component, OnInit } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import {
   BehaviorSubject,
@@ -8,93 +7,133 @@ import {
   distinctUntilChanged,
   Observable,
   startWith,
+  Subject,
   switchMap,
+  takeUntil,
   tap,
 } from 'rxjs';
+import { LoadingStateService } from '../services/loading-state.service';
+import { SwapiService } from '../services/swapi.service';
+import {
+  PAGE_LIMIT_OPTIONS,
+  STANDARD_LIMIT_ENDPOINT_CHOICE,
+  STANDARD_PAGE_LIMIT,
+  STANDARD_SORT_DIRECTION,
+  STANDARD_STABLE_TEMPLATE_CHOICE,
+  STANDARD_TABLE_CONFIG,
+} from '../shared/model/constants';
 
 import {
+  ColumnSorting,
   PageLimitOptions,
   SwApiResponse,
+  SwTableColConfig,
   SwTableConfig,
 } from '../shared/model/interfaces';
 import { TABLE_CONFIG } from '../shared/model/table-config';
-import {
-  PAGE_LIMIT_OPTIONS,
-  STANDARD_ENDPOINT_SELECTION,
-  STANDARD_LIMIT_ENDPOINT_CHOICE,
-  STANDARD_PAGE_LIMIT,
-} from '../shared/model/constants';
 
 @Component({
   selector: 'sw-plain-table',
   templateUrl: './sw-plain-table.component.html',
+  styleUrls: ['sw-plain-table.component.scss'],
 })
-export class SwPlainTableComponent implements OnInit {
+export class SwPlainTableComponent implements OnInit, OnDestroy {
   tableConfig: SwTableConfig[] = TABLE_CONFIG;
   pageLimitConfig: PageLimitOptions[] = PAGE_LIMIT_OPTIONS;
   availableRecords: number;
 
   currentPageLimit: number = STANDARD_PAGE_LIMIT;
   currentPage: number = 1;
-  currentEndpointSelection$ = new BehaviorSubject<SwTableConfig>(
-    STANDARD_ENDPOINT_SELECTION,
+  currentTableConfig$ = new BehaviorSubject<SwTableConfig>(
+    STANDARD_TABLE_CONFIG,
+  );
+  currentColumnSorting$ = new BehaviorSubject<ColumnSorting>(
+    this.searchFirstSortableColumn(STANDARD_TABLE_CONFIG),
   );
 
   apiResponse$: Observable<SwApiResponse>;
   isLoaded$ = new BehaviorSubject<boolean>(false);
+  isEndpointListEmpty$: Observable<boolean>;
+  areAllEndpointsLoaded$: Observable<boolean>;
+  isEndpointsLoadingListActive$: Observable<boolean>;
 
   searchControl: FormControl = new FormControl({
     value: '',
     disabled: false,
   });
-  limitControl: FormControl = new FormControl({
+  pageLimitControl: FormControl = new FormControl({
     value: this.currentPageLimit,
     disabled: true,
   });
-  endpointControl: FormControl = new FormControl({
-    value: STANDARD_ENDPOINT_SELECTION,
+  tableConfigControl: FormControl = new FormControl({
+    value: STANDARD_TABLE_CONFIG,
     disabled: false,
   });
   limitEndpointControl: FormControl = new FormControl({
     value: STANDARD_LIMIT_ENDPOINT_CHOICE,
     disabled: false,
   });
+  loadingStateToggle: FormControl = new FormControl({
+    value: STANDARD_STABLE_TEMPLATE_CHOICE,
+    disabled: false,
+  });
 
+  private _onDestroy = new Subject<any>();
   private _pageChange$ = new BehaviorSubject<number>(this.currentPage);
   private _previousPageLimit: number;
   private _previousSearchTerm: string = '';
-  private _previousEndpointSelection: SwTableConfig;
+  private _previousTableConfig: SwTableConfig;
   private _previousLimitEndpointChoice: boolean =
     STANDARD_LIMIT_ENDPOINT_CHOICE;
 
-  constructor(private _http: HttpClient) {}
+  constructor(
+    private _loadingStateService: LoadingStateService,
+    private _swapiService: SwapiService,
+  ) {}
 
   ngOnInit(): void {
+    this.isEndpointListEmpty$ = this._loadingStateService.isEndpointListEmpty();
+    this.isEndpointsLoadingListActive$ =
+      this._loadingStateService.isLoadingStateActive();
+    this.areAllEndpointsLoaded$ =
+      this._loadingStateService.areAllEndpointsLoaded();
+
+    this.loadingStateToggle.valueChanges
+      .pipe(takeUntil(this._onDestroy))
+      .subscribe((newState: boolean) => {
+        this._loadingStateService.changeIsLoadingStateActive(newState);
+      });
+
     /**
      * Load table date on:
      *  - page change
      *  - limit endpoint (de)activation
      *  - page limit change
      *  - search term change
-     *  - endpoint change
+     *  - sorting change
+     *  - table config change
      */
     this.apiResponse$ = combineLatest([
       this._pageChange$,
       this.limitEndpointControl.valueChanges.pipe(
         startWith(STANDARD_LIMIT_ENDPOINT_CHOICE),
       ),
-      this.limitControl.valueChanges.pipe(startWith(this.currentPageLimit)),
+      this.pageLimitControl.valueChanges.pipe(startWith(this.currentPageLimit)),
       this.searchControl.valueChanges.pipe(
         startWith(''),
         debounceTime(700),
         distinctUntilChanged(),
       ),
-      this.endpointControl.valueChanges.pipe(
-        startWith(STANDARD_ENDPOINT_SELECTION),
-        tap((selection: SwTableConfig) => {
-          this.currentEndpointSelection$.next(selection); // table head etc. must be re-rendered
+      this.currentColumnSorting$,
+      this.tableConfigControl.valueChanges.pipe(
+        startWith(STANDARD_TABLE_CONFIG),
+        tap((tableConfigSelection: SwTableConfig) => {
+          this.currentTableConfig$.next(tableConfigSelection); // table head etc. must be re-rendered
           this.isLoaded$.next(false); // show loading indicator again
           this.searchControl.setValue(''); // clear search input
+          this.currentColumnSorting$.next(
+            this.searchFirstSortableColumn(tableConfigSelection),
+          ); // change col sorting as there might be no sortable columns in the new table config
         }),
       ),
     ]).pipe(
@@ -104,7 +143,8 @@ export class SwPlainTableComponent implements OnInit {
           isLimitEndpointActive,
           pageLimit,
           enteredInput,
-          endpointSelection,
+          columnSorting,
+          tableConfigSelection,
         ]) => {
           const isNewPageLimit: boolean = pageLimit !== this._previousPageLimit;
           if (isNewPageLimit) {
@@ -120,11 +160,11 @@ export class SwPlainTableComponent implements OnInit {
             this._previousSearchTerm = enteredInput;
           }
 
-          const isNewEndpointSelection: boolean =
-            endpointSelection !== this._previousEndpointSelection;
-          if (isNewEndpointSelection) {
-            this.currentPage = 1; // if new endpoint selection, pagination should switch to page one
-            this._previousEndpointSelection = endpointSelection;
+          const isNewTableConfigSelection: boolean =
+            tableConfigSelection !== this._previousTableConfig;
+          if (isNewTableConfigSelection) {
+            this.currentPage = 1; // if new config selection, pagination should switch to page one
+            this._previousTableConfig = tableConfigSelection;
           }
 
           const isNewLimitEndpointChoice: boolean =
@@ -134,9 +174,10 @@ export class SwPlainTableComponent implements OnInit {
               isLimitEndpointActive === false &&
               this.currentPageLimit !== STANDARD_PAGE_LIMIT
             ) {
-              // must reset to standard limit, otherwise pagination will not change to correct pages
+              // if control is not active we must reset to standard limit
+              // otherwise pagination will not change to correct pages
               this.currentPageLimit = STANDARD_PAGE_LIMIT;
-              this.limitControl.setValue(STANDARD_PAGE_LIMIT);
+              this.pageLimitControl.setValue(STANDARD_PAGE_LIMIT);
             }
             this.currentPage = 1; // if new limit endpoint choice, pagination should switch to page one
             this.searchControl.setValue(''); // clear search input
@@ -150,16 +191,18 @@ export class SwPlainTableComponent implements OnInit {
             const limitCtrlStatus = isLimitEndpointActive
               ? 'enable'
               : 'disable';
-            this.limitControl[limitCtrlStatus]();
+            this.pageLimitControl[limitCtrlStatus]();
           }
 
-          return this.load(
+          return this._swapiService.getTableData(
+            tableConfigSelection,
             isLimitEndpointActive === true
-              ? endpointSelection.limitEndpoint
-              : endpointSelection.endpoint,
+              ? tableConfigSelection.limitEndpoint
+              : tableConfigSelection.endpoint,
             this.currentPage,
             this.currentPageLimit,
             enteredInput,
+            columnSorting,
           );
         },
       ),
@@ -171,9 +214,13 @@ export class SwPlainTableComponent implements OnInit {
     );
   }
 
+  ngOnDestroy(): void {
+    this._onDestroy.next(null);
+  }
+
   /**
    * Change current page.
-   * @param page Changed pagination page
+   * @param page Desired page
    */
   changePage(page: number): void {
     this.currentPage = page;
@@ -181,30 +228,31 @@ export class SwPlainTableComponent implements OnInit {
   }
 
   /**
-   * Load data from API by specific endpoint.
-   * @param endpoint Specific endpoint
-   * @param page Current table page number
-   * @param pageLimit Current table page limit
-   * @param searchTerm Optional search term
+   * Change the current column sorting.
+   * @param sorting Desired sorting
    */
-  private load(
-    endpoint: string,
-    page: number,
-    pageLimit: number,
-    searchTerm?: string,
-  ): Observable<SwApiResponse> {
-    let assembledEndpoint =
-      endpoint + '?' + `&page=${page}` + `&limit=${pageLimit}`;
-    if (!!searchTerm) {
-      assembledEndpoint =
-        endpoint +
-        `?search=${searchTerm}` +
-        `&page=${page}` +
-        `&limit=${pageLimit}`;
-    }
+  sortColumn(sorting: ColumnSorting): void {
+    this.currentColumnSorting$.next({
+      colName: sorting.colName,
+      direction: sorting.direction,
+    });
+  }
 
-    return this._http.get<SwApiResponse>(
-      assembledEndpoint,
-    ) as Observable<SwApiResponse>;
+  /**
+   * Returns column sorting object with the first found sortable column of the table configuration.
+   * If none found, and empty object is returned.
+   * @param tableConfig Current table config
+   */
+  searchFirstSortableColumn(tableConfig: SwTableConfig): ColumnSorting {
+    const firstSortableCol: SwTableColConfig = tableConfig.columnConfig.find(
+      (elm: SwTableColConfig) => elm.isSortable === true,
+    );
+
+    return firstSortableCol
+      ? {
+          colName: firstSortableCol.columnDisplayProperty,
+          direction: STANDARD_SORT_DIRECTION,
+        }
+      : {};
   }
 }

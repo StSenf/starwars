@@ -1,20 +1,23 @@
-import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
-import { MatTableModule } from '@angular/material/table';
-import { MatPaginatorModule } from '@angular/material/paginator';
-import { RouterModule } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
+import { NgModule } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatInputModule } from '@angular/material/input';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatTableModule } from '@angular/material/table';
+import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { RouterModule } from '@angular/router';
+import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
+import { AppRoutingModule } from './app-routing.module';
 
 import { AppComponent } from './app.component';
-import { SwMaterialTableComponent } from './sw-material-table/sw-material-table.component';
-import { SwPlainTableComponent } from './sw-plain-table/sw-plain-table.component';
 import { SwDisplayValueComponent } from './shared/sw-display-value/sw-display-value.component';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { SwToggleComponent } from './shared/sw-toggle/sw-toggle.component';
 import { SwPaginationComponent } from './shared/sw-pagination/sw-pagination.component';
-import { AppRoutingModule } from './app-routing.module';
+import { SwMaterialTableComponent } from './sw-material-table/sw-material-table.component';
+import { SwSortComponent } from './sw-plain-table/sorting/sw-sort.component';
+import { SwPlainTableComponent } from './sw-plain-table/sw-plain-table.component';
 
 @NgModule({
   declarations: [
@@ -23,6 +26,8 @@ import { AppRoutingModule } from './app-routing.module';
     SwMaterialTableComponent,
     SwPaginationComponent,
     SwPlainTableComponent,
+    SwToggleComponent,
+    SwSortComponent,
   ],
   imports: [
     BrowserAnimationsModule,
@@ -36,6 +41,7 @@ import { AppRoutingModule } from './app-routing.module';
     MatInputModule,
     RouterModule,
     AppRoutingModule,
+    NgbTooltipModule,
   ],
   providers: [],
   bootstrap: [AppComponent],

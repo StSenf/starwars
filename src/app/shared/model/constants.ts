@@ -1,4 +1,4 @@
-import { PageLimitOptions, SwTableConfig } from './interfaces';
+import { PageLimitOptions, SortDirection, SwTableConfig } from './interfaces';
 import { TABLE_CONFIG } from './table-config';
 
 export const STANDARD_PAGE_LIMIT = 10;
@@ -21,4 +21,6 @@ export const PAGE_LIMIT_OPTIONS: PageLimitOptions[] = [
   },
 ];
 export const STANDARD_LIMIT_ENDPOINT_CHOICE = false;
-export const STANDARD_ENDPOINT_SELECTION: SwTableConfig = TABLE_CONFIG[0];
+export const STANDARD_TABLE_CONFIG: SwTableConfig = TABLE_CONFIG[0];
+export const STANDARD_STABLE_TEMPLATE_CHOICE = true;
+export const STANDARD_SORT_DIRECTION = SortDirection.ASC;

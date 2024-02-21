@@ -1,24 +1,32 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { filter, of, pluck, switchMap, take } from 'rxjs';
+import { Observable, pluck, take, tap } from 'rxjs';
+import { SwTableColConfig } from '../model/interfaces';
+import { SwapiService } from '../../services/swapi.service';
 
 /**
  * This component renders a plain <span>-Element with data it fetches from a HTTP request.
  *
  * Usage:
  *  <sw-display-value
- *    [endpoint]="'https://swapi.dev/api/planets/1'"
- *    [displayProperty]="'name'"
+ *    [endpoint]="'https://swapi.dev/api/films/3'"
+ *    [rowIndex]="2"
+ *    [colConfig]="{
+ *       columnDisplayProperty: "films",
+ *       columnTitle: 'Movies',
+ *       areCellValuesUrl: true,
+ *       isUrlMultiple: true,
+ *       urlDisplayProperty: "title"
+ *    }"
  *  ></sw-display-value>
  *
  *  Example:
- *  In this example, the endpoint 'https://swapi.dev/api/planets/1' returns an Object
+ *  In this example, the endpoint 'https://swapi.dev/api/films/3' returns an Object
  *   {
- *     name: "Jasmin",
- *     age: 30,
- *     species: "human"
+ *     "title": "A New Hope"
+ *     "episode_id": 4,
+ *     "characters": ['https://swapi.dev/api/people/1', 'https://swapi.dev/api/people/3']
  *   }
- *  from which the property 'name' will be plucked and displayed.
+ *  from which the property 'title' will be plucked and displayed.
  */
 @Component({
   selector: 'sw-display-value',
@@ -26,35 +34,29 @@ import { filter, of, pluck, switchMap, take } from 'rxjs';
   styleUrls: ['sw-display-value.component.scss'],
 })
 export class SwDisplayValueComponent implements OnInit {
-  /** Endpoint from where the data should be fetched. */
+  /**
+   * Specific endpoint from where the data of an SwObject should
+   * be fetched e.g. "https://swapi.dev/api/planets/1".
+   */
   @Input() endpoint: string;
 
-  /** Property that should be plucked from the endpoint response. */
-  @Input() displayProperty: string;
+  /** Index of the row the element lies in. */
+  @Input() rowIndex: number;
 
-  displayValue: string;
-  isRequestCompleted: boolean = false; // otherwise the comma separators are visible before the display value gets loaded
+  /** Config of the column the element lies in. */
+  @Input() colConfig: SwTableColConfig;
 
-  constructor(private _http: HttpClient) {}
+  displayValue$: Observable<any>; // gets displayed in template
+
+  constructor(private _swapiService: SwapiService) {}
 
   ngOnInit(): void {
-    of(this.endpoint)
-      .pipe(
-        filter((ep: string) => ep !== ''),
-        switchMap(() => this._http.get(this.endpoint)),
-        take(1),
-        pluck(this.displayProperty),
+    this.displayValue$ = this._swapiService
+      .getCellData(
+        this.endpoint,
+        this.rowIndex,
+        this.colConfig.columnDisplayProperty,
       )
-      .subscribe({
-        next: (dp: string) => {
-          this.displayValue = dp;
-        },
-        error: () => {
-          console.error('Error while fetching data.');
-        },
-        complete: () => {
-          this.isRequestCompleted = true;
-        },
-      });
+      .pipe(take(1), pluck(this.colConfig.urlDisplayProperty));
   }
 }
