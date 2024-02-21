@@ -12,7 +12,6 @@ import {
   takeUntil,
   tap,
 } from 'rxjs';
-import { map } from 'rxjs/operators';
 import { LoadingStateService } from '../services/loading-state.service';
 import { SwapiService } from '../services/swapi.service';
 import {
@@ -27,7 +26,6 @@ import {
 import {
   ColumnSorting,
   PageLimitOptions,
-  SortDirection,
   SwApiResponse,
   SwTableColConfig,
   SwTableConfig,
@@ -76,7 +74,7 @@ export class SwPlainTableComponent implements OnInit, OnDestroy {
     disabled: false,
   });
   loadingStateToggle: FormControl = new FormControl({
-    value: STANDARD_STABLE_TEMPLATE_CHOICE, // ToDo: with sorting the loading state correspondingRowIndex is messed up
+    value: STANDARD_STABLE_TEMPLATE_CHOICE,
     disabled: false,
   });
 
@@ -196,21 +194,16 @@ export class SwPlainTableComponent implements OnInit, OnDestroy {
             this.pageLimitControl[limitCtrlStatus]();
           }
 
-          return this._swapiService
-            .getTableData(
-              tableConfigSelection,
-              isLimitEndpointActive === true
-                ? tableConfigSelection.limitEndpoint
-                : tableConfigSelection.endpoint,
-              this.currentPage,
-              this.currentPageLimit,
-              enteredInput,
-            )
-            .pipe(
-              map((response: SwApiResponse) =>
-                this.sortResponseResults(response, columnSorting),
-              ),
-            );
+          return this._swapiService.getTableData(
+            tableConfigSelection,
+            isLimitEndpointActive === true
+              ? tableConfigSelection.limitEndpoint
+              : tableConfigSelection.endpoint,
+            this.currentPage,
+            this.currentPageLimit,
+            enteredInput,
+            columnSorting,
+          );
         },
       ),
       tap((response: SwApiResponse) => {
@@ -261,39 +254,5 @@ export class SwPlainTableComponent implements OnInit, OnDestroy {
           direction: STANDARD_SORT_DIRECTION,
         }
       : {};
-  }
-
-  /**
-   * Returns the response with sorted results.
-   * @param response API response object
-   * @param columnSorting Current column sorting e.g. { colName: "title", direction: "desc" }
-   */
-  sortResponseResults(
-    response: SwApiResponse,
-    columnSorting: ColumnSorting,
-  ): SwApiResponse {
-    if (!!columnSorting === false) {
-      // return immediately if no sorting provided
-      return response;
-    }
-
-    const isDirectionAsc: boolean =
-      columnSorting.direction === SortDirection.ASC;
-
-    const sortedResults = response.results.sort((a, b) => {
-      const elmA = a[columnSorting.colName];
-      const elmB = b[columnSorting.colName];
-      if (elmA < elmB) {
-        return isDirectionAsc ? -1 : 1;
-      }
-      if (elmA > elmB) {
-        return isDirectionAsc ? 1 : -1;
-      }
-
-      // must be equal
-      return 0;
-    });
-
-    return { ...response, results: sortedResults };
   }
 }

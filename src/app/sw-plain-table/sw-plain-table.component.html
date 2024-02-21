@@ -57,8 +57,8 @@
           {{ colConfig.columnTitle }}
           <sw-sort
             *ngIf="colConfig.isSortable"
-            [currentColumnSorting]="obj.currentColumnSorting"
-            [columnSortConfig]="{ colName: colConfig.columnDisplayProperty }"
+            [currentTableSorting]="obj.currentColumnSorting"
+            [columnName]="colConfig.columnDisplayProperty"
             (sorted)="sortColumn($event)"
           ></sw-sort>
         </th>

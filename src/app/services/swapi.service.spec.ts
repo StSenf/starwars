@@ -1,13 +1,12 @@
-import { SwapiService } from './swapi.service';
+import { HttpErrorResponse } from '@angular/common/http';
 import {
   HttpClientTestingModule,
   HttpTestingController,
 } from '@angular/common/http/testing';
-import { HttpErrorResponse } from '@angular/common/http';
-import { LoadingStateService } from './loading-state.service';
 import { TestBed, waitForAsync } from '@angular/core/testing';
 import { MockLoadingStateService } from '../shared/mocks/mock-loading-state.service';
 import {
+  SortDirection,
   SwApiResponse,
   SwPerson,
   SwTableConfig,
@@ -16,6 +15,8 @@ import {
   LoadingStatus,
   StatusEntry,
 } from '../shared/model/loading-state.interfaces';
+import { LoadingStateService } from './loading-state.service';
+import { SwapiService } from './swapi.service';
 import Spy = jasmine.Spy;
 
 describe('SwapiService', () => {
@@ -84,8 +85,7 @@ describe('SwapiService', () => {
       });
     });
 
-    it('should create a status entry list if API response happens', () => {
-      const createSpy = spyOn(loadingStateService, 'createEndpointLoadingList');
+    describe('successful response', () => {
       const mockResponse: SwApiResponse = {
         results: [
           {
@@ -131,44 +131,101 @@ describe('SwapiService', () => {
           },
         ],
       };
-      const expectedStatusEntryList: StatusEntry[] = [
-        {
-          colName: 'films',
-          correspondingRowIdx: 0, // Luke column
-          endpoint: 'https://swapi.dev/api/films/3',
-          status: LoadingStatus.ADDED,
-        },
-        {
-          colName: 'films',
-          correspondingRowIdx: 0, // Luke column
-          endpoint: 'https://swapi.dev/api/films/4',
-          status: LoadingStatus.ADDED,
-        },
-        {
-          colName: 'films',
-          correspondingRowIdx: 1, // Annakin column
-          endpoint: 'https://swapi.dev/api/films/1',
-          status: LoadingStatus.ADDED,
-        },
-        {
-          colName: 'films',
-          correspondingRowIdx: 1, // Annakin column
-          endpoint: 'https://swapi.dev/api/films/4',
-          status: LoadingStatus.ADDED,
-        },
-      ];
 
-      swapiService
-        .getTableData(mockTableConfig, 'www.mock.de', 1, 10)
-        .subscribe();
+      it('should create an unsorted status entry list', () => {
+        const createSpy = spyOn(
+          loadingStateService,
+          'createEndpointLoadingList',
+        );
 
-      const req = httpTestingController.expectOne(
-        'www.mock.de?&page=1&limit=10',
-      );
-      expect(req.request.method).toEqual('GET');
-      req.flush(mockResponse);
+        const expectedUnsortedStatusEntryList: StatusEntry[] = [
+          {
+            colName: 'films',
+            correspondingRowIdx: 0, // Luke column
+            endpoint: 'https://swapi.dev/api/films/3',
+            status: LoadingStatus.ADDED,
+          },
+          {
+            colName: 'films',
+            correspondingRowIdx: 0, // Luke column
+            endpoint: 'https://swapi.dev/api/films/4',
+            status: LoadingStatus.ADDED,
+          },
+          {
+            colName: 'films',
+            correspondingRowIdx: 1, // Annakin column
+            endpoint: 'https://swapi.dev/api/films/1',
+            status: LoadingStatus.ADDED,
+          },
+          {
+            colName: 'films',
+            correspondingRowIdx: 1, // Annakin column
+            endpoint: 'https://swapi.dev/api/films/4',
+            status: LoadingStatus.ADDED,
+          },
+        ];
 
-      expect(createSpy).toHaveBeenCalledWith(expectedStatusEntryList);
+        swapiService
+          .getTableData(mockTableConfig, 'www.mock.de', 1, 10)
+          .subscribe();
+
+        const req = httpTestingController.expectOne(
+          'www.mock.de?&page=1&limit=10',
+        );
+        expect(req.request.method).toEqual('GET');
+        req.flush(mockResponse);
+
+        expect(createSpy).toHaveBeenCalledWith(expectedUnsortedStatusEntryList);
+      });
+
+      it('should create a sorted status entry list', () => {
+        const createSpy = spyOn(
+          loadingStateService,
+          'createEndpointLoadingList',
+        );
+
+        const expectedSortedStatusEntryList: StatusEntry[] = [
+          {
+            colName: 'films',
+            correspondingRowIdx: 0,
+            endpoint: 'https://swapi.dev/api/films/1', // Annakin film 1
+            status: LoadingStatus.ADDED,
+          },
+          {
+            colName: 'films',
+            correspondingRowIdx: 0,
+            endpoint: 'https://swapi.dev/api/films/4', // Annakin film 2
+            status: LoadingStatus.ADDED,
+          },
+          {
+            colName: 'films',
+            correspondingRowIdx: 1,
+            endpoint: 'https://swapi.dev/api/films/3', // Luke film 1
+            status: LoadingStatus.ADDED,
+          },
+          {
+            colName: 'films',
+            correspondingRowIdx: 1,
+            endpoint: 'https://swapi.dev/api/films/4', // Luke film 2
+            status: LoadingStatus.ADDED,
+          },
+        ];
+
+        swapiService
+          .getTableData(mockTableConfig, 'www.mock.de', 1, 10, undefined, {
+            colName: 'name',
+            direction: SortDirection.ASC,
+          })
+          .subscribe();
+
+        const req = httpTestingController.expectOne(
+          'www.mock.de?&page=1&limit=10',
+        );
+        expect(req.request.method).toEqual('GET');
+        req.flush(mockResponse);
+
+        expect(createSpy).toHaveBeenCalledWith(expectedSortedStatusEntryList);
+      });
     });
 
     it('should throw error and dont create a status entry list', () => {
