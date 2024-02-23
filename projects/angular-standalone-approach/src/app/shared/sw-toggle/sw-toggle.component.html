@@ -1,0 +1,19 @@
+<div class="form-check form-switch">
+  <input
+    [attr.checked]="value ? '' : null"
+    (input)="onChange($any($event.target).checked)"
+    (blur)="onTouched()"
+    [disabled]="isDisabled"
+    class="form-check-input"
+    type="checkbox"
+    id="{{ randomId }}"
+  />
+  <label
+    class="form-check-label"
+    for="{{ randomId }}"
+    placement="top"
+    ngbTooltip="{{ tooltipText }}"
+  >
+    {{ labelText }}
+  </label>
+</div>

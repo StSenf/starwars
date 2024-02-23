@@ -1,0 +1,12 @@
+div {
+  &.is-auto {
+    height: auto;
+    visibility: visible;
+  }
+
+  &.is-squeezed {
+    height: 1px;
+    overflow: hidden;
+    visibility: hidden;
+  }
+}

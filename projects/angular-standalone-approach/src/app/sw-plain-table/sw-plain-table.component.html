@@ -1,0 +1,181 @@
+<ng-container
+  *ngIf="{
+    isLoaded: isLoaded$ | async,
+    apiResponse: apiResponse$ | async,
+    currentTableConfig: currentTableConfig$ | async,
+    areAllEndpointsLoaded: areAllEndpointsLoaded$ | async,
+    isEndpointsLoadingListActive: isEndpointsLoadingListActive$ | async,
+    currentColumnSorting: currentColumnSorting$ | async
+  } as obj"
+>
+  <div class="row p-2 mb-3">
+    <div class="col-4">
+      <div class="form-group">
+        <input
+          [formControl]="searchControl"
+          type="text"
+          class="form-control"
+          placeholder="{{ obj.currentTableConfig.searchPhrase }}"
+        />
+      </div>
+    </div>
+
+    <div class="col-4">
+      <div class="row">
+        <div class="col-auto pt-2">
+          <label for="tableConfigSelect">What data do you want to see:</label>
+        </div>
+        <div class="col">
+          <div class="form-group">
+            <select
+              id="tableConfigSelect"
+              class="form-select"
+              style="width: auto"
+              [formControl]="tableConfigControl"
+            >
+              <option
+                *ngFor="let tableColConfig of tableConfig"
+                [ngValue]="tableColConfig"
+              >
+                {{ tableColConfig.tableConfigControlValue }}
+              </option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <table class="table p-2">
+    <thead class="thead-dark">
+      <tr>
+        <th scope="col">#</th>
+        <th
+          *ngFor="let colConfig of obj.currentTableConfig.columnConfig"
+          scope="col"
+        >
+          {{ colConfig.columnTitle }}
+          <sw-sort
+            *ngIf="colConfig.isSortable"
+            [currentTableSorting]="obj.currentColumnSorting"
+            [columnName]="colConfig.columnDisplayProperty"
+            (sorted)="sortColumn($event)"
+          ></sw-sort>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngIf="obj.areAllEndpointsLoaded === false || obj.isLoaded == false">
+        <td [attr.colspan]="obj.currentTableConfig?.columnConfig?.length + 1">
+          ... is loading
+        </td>
+      </tr>
+      <tr
+        *ngIf="obj.isLoaded === true && obj.apiResponse?.results?.length === 0"
+      >
+        <td [attr.colspan]="obj.currentTableConfig?.columnConfig?.length + 1">
+          No data found
+        </td>
+      </tr>
+      <ng-container *ngIf="obj.apiResponse?.results?.length > 0">
+        <tr *ngFor="let result of obj.apiResponse?.results; let i = index">
+          <th scope="row">
+            {{ i + 1 }}
+          </th>
+          <td *ngFor="let config of obj.currentTableConfig.columnConfig">
+            <div
+              [ngClass]="
+                obj.isEndpointsLoadingListActive === false ||
+                (obj.areAllEndpointsLoaded === true && obj.isLoaded === true)
+                  ? 'is-auto'
+                  : 'is-squeezed'
+              "
+            >
+              <ng-container
+                *ngTemplateOutlet="
+                  valueTpl;
+                  context: {
+                    result: result,
+                    config: config,
+                    standard: config.areCellValuesUrl === false,
+                    rowIdx: i
+                  }
+                "
+              ></ng-container>
+            </div>
+          </td>
+        </tr>
+      </ng-container>
+    </tbody>
+  </table>
+</ng-container>
+
+<div class="d-flex align-items-center p-2">
+  <select
+    class="form-select"
+    style="width: auto"
+    [formControl]="pageLimitControl"
+  >
+    <option *ngFor="let option of pageLimitConfig" [ngValue]="option.value">
+      {{ option.displayValue }}
+    </option>
+  </select>
+
+  <sw-toggle
+    [labelText]="'Activate limit endpoints'"
+    [formControl]="limitEndpointControl"
+    [tooltipText]="
+      'When activated, the table will fetch its data from swapi.tech instead of swapi.dev. Only swapi.tech can process requests with the parameter limit.'
+    "
+    class="ms-3"
+  ></sw-toggle>
+
+  <sw-toggle
+    [labelText]="'Activate stable template rendering'"
+    [formControl]="loadingStateToggle"
+    [tooltipText]="
+      'When activated, the rendering of the table contents will appear at once. This may take up to 30 seconds.'
+    "
+    class="ms-3"
+  ></sw-toggle>
+
+  <sw-pagination
+    style="margin-left: auto"
+    *ngIf="availableRecords"
+    [availableRecords]="availableRecords"
+    [pageSize]="currentPageLimit"
+    [currentPage]="currentPage"
+    (clickedPage)="changePage($event)"
+  ></sw-pagination>
+</div>
+
+<ng-template
+  #valueTpl
+  let-standard="standard"
+  let-swObject="result"
+  let-colConfig="config"
+  let-rowIdx="rowIdx"
+>
+  <ng-container *ngIf="standard === true">
+    {{ swObject[colConfig.columnDisplayProperty] }}
+  </ng-container>
+
+  <ng-container *ngIf="standard === false">
+    <ng-container *ngIf="colConfig.isUrlMultiple === true">
+      <sw-display-value
+        *ngFor="let url of swObject[colConfig.columnDisplayProperty]"
+        [colConfig]="colConfig"
+        [endpoint]="url"
+        [rowIndex]="rowIdx"
+      ></sw-display-value>
+    </ng-container>
+
+    <ng-container *ngIf="colConfig.isUrlMultiple === false">
+      <sw-display-value
+        [colConfig]="colConfig"
+        [endpoint]="swObject[colConfig.columnDisplayProperty]"
+        [rowIndex]="rowIdx"
+      ></sw-display-value>
+    </ng-container>
+  </ng-container>
+</ng-template>

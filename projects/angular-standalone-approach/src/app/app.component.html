@@ -1,0 +1,32 @@
+<nav class="navbar navbar-expand navbar-dark bg-dark mb-3">
+  <div class="navbar-brand">
+    <img
+      src="https://upload.wikimedia.org/wikipedia/commons/6/6c/Star_Wars_Logo.svg"
+      width="30"
+      height="30"
+      class="d-inline-block align-top"
+      alt=""
+    />
+    <span class="d-inline-block" style="width: 10px"></span>
+    <span class="d-inline-block p-lg-1">Star Wars API Playground</span>
+  </div>
+
+  <div class="navbar-nav">
+    <a
+      class="nav-item nav-link"
+      routerLink="/plain-table"
+      routerLinkActive="active"
+    >
+      Plain Table
+    </a>
+    <a
+      class="nav-item nav-link"
+      routerLink="/material-table"
+      routerLinkActive="active"
+    >
+      Material Table
+    </a>
+  </div>
+</nav>
+
+<router-outlet></router-outlet>

@@ -1,0 +1,12 @@
+span {
+  display: inline;
+
+  &.is-multiple:after {
+    content: ", ";
+    width: 3px;
+  }
+  &.is-last-multiple:after {
+    display: none;
+  }
+}
+
