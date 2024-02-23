@@ -1,11 +1,12 @@
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { ReactiveFormsModule } from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatTableModule } from '@angular/material/table';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { ReactiveFormsModule } from '@angular/forms';
-import { MatInputModule } from '@angular/material/input';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { SwDisplayValueComponent } from '../shared/sw-display-value-component/sw-display-value.component';
 
 import { SwMaterialTableComponent } from './sw-material-table.component';
 
@@ -23,6 +24,7 @@ describe('SwMaterialTableComponent', () => {
         MatFormFieldModule,
         MatInputModule,
         HttpClientTestingModule,
+        SwDisplayValueComponent,
       ],
     }).compileComponents();
   }));

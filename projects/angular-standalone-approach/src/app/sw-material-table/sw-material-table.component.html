@@ -27,10 +27,20 @@
       <td mat-cell *matCellDef="let row">{{ row.gender }}</td>
     </ng-container>
 
-    <!-- url Column -->
-    <ng-container matColumnDef="url">
-      <th mat-header-cell *matHeaderCellDef>Url</th>
-      <td mat-cell *matCellDef="let row">{{ row.url }}</td>
+    <!-- homeworld Column -->
+    <ng-container matColumnDef="homeworld">
+      <th mat-header-cell *matHeaderCellDef>Home</th>
+      <td mat-cell *matCellDef="let row">
+        <sw-display-value
+          [endpoint]="row.homeworld"
+          [colConfig]="{
+            columnDisplayProperty: 'homeworld',
+            urlDisplayProperty: 'name',
+            columnTitle: 'Home',
+            areCellValuesUrl: true
+          }"
+        ></sw-display-value>
+      </td>
     </ng-container>
 
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>

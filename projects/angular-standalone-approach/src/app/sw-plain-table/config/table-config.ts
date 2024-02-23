@@ -1,4 +1,4 @@
-import { SwTableConfig } from './interfaces';
+import { SwTableConfig } from '../../shared/model/interfaces';
 
 export const TABLE_CONFIG: SwTableConfig[] = [
   {

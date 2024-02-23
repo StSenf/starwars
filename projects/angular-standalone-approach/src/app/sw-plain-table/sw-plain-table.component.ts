@@ -19,16 +19,9 @@ import {
   takeUntil,
   tap,
 } from 'rxjs';
-import { LoadingStateService } from '../services/loading-state.service';
-import { SwapiService } from '../services/swapi.service';
-import {
-  PAGE_LIMIT_OPTIONS,
-  STANDARD_LIMIT_ENDPOINT_CHOICE,
-  STANDARD_PAGE_LIMIT,
-  STANDARD_SORT_DIRECTION,
-  STANDARD_STABLE_TEMPLATE_CHOICE,
-  STANDARD_TABLE_CONFIG,
-} from '../shared/model/constants';
+import { LibPaginationComponent, LibToggleComponent } from 'shared-components';
+import { LoadingStateService } from '../shared/services/loading-state.service';
+import { SwapiService } from '../shared/services/swapi.service';
 
 import {
   ColumnSorting,
@@ -37,10 +30,16 @@ import {
   SwTableColConfig,
   SwTableConfig,
 } from '../shared/model/interfaces';
-import { TABLE_CONFIG } from '../shared/model/table-config';
-import { SwDisplayValueComponent } from '../shared/sw-display-value/sw-display-value.component';
-import { SwPaginationComponent } from '../shared/sw-pagination/sw-pagination.component';
-import { SwToggleComponent } from '../shared/sw-toggle/sw-toggle.component';
+import { TABLE_CONFIG } from './config/table-config';
+import { SwDisplayValueComponent } from '../shared/sw-display-value-component/sw-display-value.component';
+import {
+  STANDARD_TABLE_CONFIG,
+  PAGE_LIMIT_OPTIONS,
+  STANDARD_LIMIT_ENDPOINT_CHOICE,
+  STANDARD_PAGE_LIMIT,
+  STANDARD_SORT_DIRECTION,
+  STANDARD_STABLE_TEMPLATE_CHOICE,
+} from './config/table-constants';
 import { SwSortComponent } from './sorting/sw-sort.component';
 
 @Component({
@@ -57,8 +56,8 @@ import { SwSortComponent } from './sorting/sw-sort.component';
     NgTemplateOutlet,
     SwSortComponent,
     SwDisplayValueComponent,
-    SwPaginationComponent,
-    SwToggleComponent,
+    LibToggleComponent,
+    LibPaginationComponent,
   ],
 })
 export class SwPlainTableComponent implements OnInit, OnDestroy {

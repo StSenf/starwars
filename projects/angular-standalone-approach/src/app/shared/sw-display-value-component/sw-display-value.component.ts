@@ -1,7 +1,7 @@
 import { AsyncPipe } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
 import { Observable, pluck, take } from 'rxjs';
-import { SwapiService } from '../../services/swapi.service';
+import { SwapiService } from '../services/swapi.service';
 import { SwTableColConfig } from '../model/interfaces';
 
 /**
@@ -44,10 +44,13 @@ export class SwDisplayValueComponent implements OnInit {
   @Input() endpoint: string;
 
   /** Index of the row the element lies in. */
-  @Input() rowIndex: number;
+  @Input() rowIndex?: number;
 
   /** Config of the column the element lies in. */
   @Input() colConfig: SwTableColConfig;
+
+  /** If set to true, loading state changes are triggered. */
+  @Input() useLoadingState?: boolean = false;
 
   displayValue$: Observable<any>; // gets displayed in template
 
@@ -59,6 +62,7 @@ export class SwDisplayValueComponent implements OnInit {
         this.endpoint,
         this.rowIndex,
         this.colConfig.columnDisplayProperty,
+        this.useLoadingState,
       )
       .pipe(take(1), pluck(this.colConfig.urlDisplayProperty));
   }

@@ -121,32 +121,32 @@
     </option>
   </select>
 
-  <sw-toggle
+  <lib-toggle
     [labelText]="'Activate limit endpoints'"
     [formControl]="limitEndpointControl"
     [tooltipText]="
       'When activated, the table will fetch its data from swapi.tech instead of swapi.dev. Only swapi.tech can process requests with the parameter limit.'
     "
     class="ms-3"
-  ></sw-toggle>
+  ></lib-toggle>
 
-  <sw-toggle
+  <lib-toggle
     [labelText]="'Activate stable template rendering'"
     [formControl]="loadingStateToggle"
     [tooltipText]="
       'When activated, the rendering of the table contents will appear at once. This may take up to 30 seconds.'
     "
     class="ms-3"
-  ></sw-toggle>
+  ></lib-toggle>
 
-  <sw-pagination
+  <lib-pagination
     style="margin-left: auto"
     *ngIf="availableRecords"
     [availableRecords]="availableRecords"
-    [pageSize]="currentPageLimit"
+    [currentPageSize]="currentPageLimit"
     [currentPage]="currentPage"
     (clickedPage)="changePage($event)"
-  ></sw-pagination>
+  ></lib-pagination>
 </div>
 
 <ng-template
@@ -167,6 +167,7 @@
         [colConfig]="colConfig"
         [endpoint]="url"
         [rowIndex]="rowIdx"
+        [useLoadingState]="true"
       ></sw-display-value>
     </ng-container>
 
@@ -175,6 +176,7 @@
         [colConfig]="colConfig"
         [endpoint]="swObject[colConfig.columnDisplayProperty]"
         [rowIndex]="rowIdx"
+        [useLoadingState]="true"
       ></sw-display-value>
     </ng-container>
   </ng-container>

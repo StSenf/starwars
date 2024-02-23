@@ -1,12 +1,12 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { SwPaginationComponent } from './sw-pagination.component';
+import { LibPaginationComponent } from './pagination.component';
 
 describe('SwPaginationComponent', () => {
-  let component: SwPaginationComponent;
-  let fixture: ComponentFixture<SwPaginationComponent>;
+  let component: LibPaginationComponent;
+  let fixture: ComponentFixture<LibPaginationComponent>;
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(SwPaginationComponent);
+    fixture = TestBed.createComponent(LibPaginationComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
@@ -19,7 +19,7 @@ describe('SwPaginationComponent', () => {
     const expectedAvailablePageCount: number = Math.ceil(count / pageSize);
 
     component.currentPage = 1;
-    component.pageSize = pageSize;
+    component.currentPageSize = pageSize;
     component.availableRecords = count;
     component.ngOnInit();
 
@@ -31,7 +31,7 @@ describe('SwPaginationComponent', () => {
     expect(availablePageCount).toBe(expectedAvailablePageCount);
 
     // use setter a 2nd time
-    component.pageSize = 10;
+    component.currentPageSize = 10;
     const newAvailablePageCount: number = Math.ceil(count / 10);
     expect(availablePageCount).toBe(newAvailablePageCount);
   });

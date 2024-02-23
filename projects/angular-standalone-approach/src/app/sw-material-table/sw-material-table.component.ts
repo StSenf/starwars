@@ -26,6 +26,7 @@ import {
 } from 'rxjs';
 
 import { SwApiResponse, SwPerson } from '../shared/model/interfaces';
+import { SwDisplayValueComponent } from '../shared/sw-display-value-component/sw-display-value.component';
 
 @Component({
   standalone: true,
@@ -38,6 +39,7 @@ import { SwApiResponse, SwPerson } from '../shared/model/interfaces';
     MatTableModule,
     MatFormFieldModule,
     MatInputModule,
+    SwDisplayValueComponent,
   ],
 })
 export class SwMaterialTableComponent implements OnInit, OnDestroy {
@@ -45,7 +47,7 @@ export class SwMaterialTableComponent implements OnInit, OnDestroy {
   @ViewChild(MatTable) table!: MatTable<SwPerson>;
 
   /** Columns displayed in the table. Columns IDs can be added, removed, or reordered. */
-  public displayedColumns = ['name', 'birth_year', 'gender', 'url'];
+  public displayedColumns = ['name', 'birth_year', 'gender', 'homeworld'];
 
   public dataSource: MatTableDataSource<SwPerson>;
   public availableRecords: number = 0;

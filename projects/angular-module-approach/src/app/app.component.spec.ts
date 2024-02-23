@@ -1,19 +1,13 @@
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { AppComponent } from './app.component';
-import { SwPlainTableComponent } from './sw-plain-table/sw-plain-table.component';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { SwPaginationComponent } from './shared/sw-pagination/sw-pagination.component';
 
 describe('AppComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [RouterTestingModule, HttpClientTestingModule],
-      declarations: [
-        AppComponent,
-        SwPlainTableComponent,
-        SwPaginationComponent,
-      ],
+      declarations: [AppComponent],
     }).compileComponents();
   });
 

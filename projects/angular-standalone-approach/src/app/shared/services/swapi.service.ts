@@ -14,11 +14,8 @@ import {
   SwTableColConfig,
   SwTableConfig,
   SwVehicle,
-} from '../shared/model/interfaces';
-import {
-  LoadingStatus,
-  StatusEntry,
-} from '../shared/model/loading-state.interfaces';
+} from '../model/interfaces';
+import { LoadingStatus, StatusEntry } from '../model/loading-state.interfaces';
 import { LoadingStateService } from './loading-state.service';
 
 @Injectable({ providedIn: 'root' })
@@ -96,11 +93,13 @@ export class SwapiService {
    * @param endpoint Specific endpoint
    * @param rowIndex Row index where the entry lies
    * @param colName The column name where the entry lies in
+   * @param useLoadingState If set to false, no loading state changes are triggered
    */
   getCellData(
     endpoint: string,
     rowIndex: number,
     colName: string,
+    useLoadingState: boolean = false,
   ): Observable<
     SwPerson | SwPlanet | SwFilm | SwStarship | SwVehicle | SwSpecies | never
   > {
@@ -114,25 +113,31 @@ export class SwapiService {
 
     return this._http.get<string>(endpoint).pipe(
       tap((r: any) => {
-        statusEntry = {
-          ...statusEntry,
-          status: LoadingStatus.LOADING,
-        };
-        this._loadingStateService.changeElementStatus(statusEntry);
+        if (useLoadingState === true) {
+          statusEntry = {
+            ...statusEntry,
+            status: LoadingStatus.LOADING,
+          };
+
+          this._loadingStateService.changeElementStatus(statusEntry);
+        }
       }),
       catchError((error) => {
         didErrorOccur = true;
         return throwError(`Error while fetching data. Error ${error}`);
       }),
       finalize(() => {
-        // finalize is called when observable completes or errors
-        statusEntry = {
-          ...statusEntry,
-          status: didErrorOccur
-            ? LoadingStatus.ERRONEOUS
-            : LoadingStatus.LOADED,
-        };
-        this._loadingStateService.changeElementStatus(statusEntry);
+        if (useLoadingState === true) {
+          // finalize is called when observable completes or errors
+          statusEntry = {
+            ...statusEntry,
+            status: didErrorOccur
+              ? LoadingStatus.ERRONEOUS
+              : LoadingStatus.LOADED,
+          };
+
+          this._loadingStateService.changeElementStatus(statusEntry);
+        }
       }),
     );
   }

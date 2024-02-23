@@ -4,17 +4,14 @@ import {
   HttpTestingController,
 } from '@angular/common/http/testing';
 import { TestBed, waitForAsync } from '@angular/core/testing';
-import { MockLoadingStateService } from '../shared/mocks/mock-loading-state.service';
+import { MockLoadingStateService } from '../mocks/mock-loading-state.service';
 import {
   SortDirection,
   SwApiResponse,
   SwPerson,
   SwTableConfig,
-} from '../shared/model/interfaces';
-import {
-  LoadingStatus,
-  StatusEntry,
-} from '../shared/model/loading-state.interfaces';
+} from '../model/interfaces';
+import { LoadingStatus, StatusEntry } from '../model/loading-state.interfaces';
 import { LoadingStateService } from './loading-state.service';
 import { SwapiService } from './swapi.service';
 import Spy = jasmine.Spy;
@@ -269,7 +266,7 @@ describe('SwapiService', () => {
 
     it('should change element status from loading to loaded if response happened', () => {
       swapiService
-        .getCellData(endpoint, correspondingRowIdx, colName)
+        .getCellData(endpoint, correspondingRowIdx, colName, true)
         .subscribe();
 
       const req = httpTestingController.expectOne(endpoint);
@@ -299,7 +296,7 @@ describe('SwapiService', () => {
       } as HttpErrorResponse;
 
       swapiService
-        .getCellData(endpoint, correspondingRowIdx, colName)
+        .getCellData(endpoint, correspondingRowIdx, colName, true)
         .subscribe({
           next: () => {},
           error: (err) => (result = err),
@@ -317,6 +314,18 @@ describe('SwapiService', () => {
         correspondingRowIdx,
         colName,
       });
+    });
+
+    it('should not change element status if "useLoadingState" parameter is not set', () => {
+      swapiService
+        .getCellData(endpoint, correspondingRowIdx, colName)
+        .subscribe();
+
+      const req = httpTestingController.expectOne(endpoint);
+      expect(req.request.method).toEqual('GET');
+      req.flush(mockResponse);
+
+      expect(changeElmSpy).not.toHaveBeenCalled();
     });
   });
 });

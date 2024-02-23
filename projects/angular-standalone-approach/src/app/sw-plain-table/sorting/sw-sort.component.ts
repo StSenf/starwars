@@ -2,8 +2,8 @@ import { AsyncPipe, NgClass, NgIf } from '@angular/common';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { STANDARD_SORT_DIRECTION } from '../../shared/model/constants';
 import { ColumnSorting, SortDirection } from '../../shared/model/interfaces';
+import { STANDARD_SORT_DIRECTION } from '../config/table-constants';
 
 /**
  * This component renders an arrow icon. By default, the icon is faced upwards (ASC).
