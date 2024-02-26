@@ -1,0 +1,34 @@
+<nav class="navbar navbar-expand navbar-dark bg-dark mb-3">
+  <div class="navbar-brand">
+    <span class="d-inline-block">Sling</span>
+    <span class="d-inline-block highlight-green">Academy</span>
+  </div>
+
+  <div class="navbar-nav">
+    <a
+      class="nav-item nav-link"
+      routerLink="/students"
+      routerLinkActive="active"
+    >
+      Students
+    </a>
+    <a
+      class="nav-item nav-link disabled"
+      aria-disabled="true"
+      routerLink="/photos"
+      routerLinkActive="active"
+    >
+      Photos
+    </a>
+    <a
+      class="nav-item nav-link disabled"
+      aria-disabled="true"
+      routerLink="/posts"
+      routerLinkActive="active"
+    >
+      Blog Posts
+    </a>
+  </div>
+</nav>
+
+<router-outlet></router-outlet>
