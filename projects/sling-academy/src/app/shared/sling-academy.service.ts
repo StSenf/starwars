@@ -12,8 +12,11 @@ import {
 export class SlingAcademyService {
   constructor(private _http: HttpClient) {}
 
-  getStudents(): Observable<SlingStudentListResponse> {
-    const endpoint = 'https://api.slingacademy.com/v1/sample-data/users';
+  getStudents(
+    offset: number = 0,
+    limit: number = 10,
+  ): Observable<SlingStudentListResponse> {
+    const endpoint = `https://api.slingacademy.com/v1/sample-data/users?offset=${offset}&limit=${limit}`;
 
     return this._http.get<SlingStudentListResponse>(endpoint);
   }
@@ -43,8 +46,11 @@ export class SlingAcademyService {
     );
   }
 
-  getPosts(): Observable<SlingPostListResponse> {
-    const endpoint = 'https://api.slingacademy.com/v1/sample-data/blog-posts';
+  getPosts(
+    offset: number = 0,
+    limit: number = 10,
+  ): Observable<SlingPostListResponse> {
+    const endpoint = `https://api.slingacademy.com/v1/sample-data/blog-posts?offset=${offset}&limit=${limit}`;
 
     return this._http.get<SlingPostListResponse>(endpoint);
   }

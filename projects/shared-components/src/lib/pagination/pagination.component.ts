@@ -63,12 +63,12 @@ export class LibPaginationComponent implements OnInit {
     this.clickedPage.next(clickedPage);
   }
 
-  clickPrevious(): void {
+  protected clickPrevious(): void {
     const prev: number = this.currentPage - 1;
     this.clickedPage.next(prev);
   }
 
-  clickNext(): void {
+  protected clickNext(): void {
     const nxt: number = this.currentPage + 1;
     this.clickedPage.next(nxt);
   }

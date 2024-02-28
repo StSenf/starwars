@@ -1,31 +1,46 @@
-<ng-container *ngIf="{ apiResponse: apiResponse$ | async } as obj">
-  <table *ngIf="obj.apiResponse" class="table table-hover">
-    <thead>
-      <tr>
-        <th scope="col">#</th>
-        <th scope="col">Name</th>
-        <th scope="col">Student ID</th>
-        <th scope="col">Job</th>
-        <th scope="col">Age</th>
-        <th scope="col">Gender</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr
-        *ngFor="let student of obj.apiResponse.users; let idx = index"
-        (click)="navigateTo(student.id)"
-      >
-        <th scope="row">{{ idx + 1 }}</th>
-        <td>{{ student.first_name }} {{ student.last_name }}</td>
-        <td>{{ student.id }}</td>
-        <td>{{ student.job }}</td>
-        <td>
-          {{ student.date_of_birth | SacDateToAge }} (
-          {{ student.date_of_birth | date: "mediumDate" }}
-          )
-        </td>
-        <td>{{ student.gender }}</td>
-      </tr>
-    </tbody>
-  </table>
+<ng-container
+  *ngIf="{ studentListResponse: studentListResponse$ | async } as obj"
+>
+  <ng-container *ngIf="obj.studentListResponse">
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Name</th>
+          <th scope="col">Student ID</th>
+          <th scope="col">Job</th>
+          <th scope="col">Age</th>
+          <th scope="col">Gender</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          *ngFor="let student of obj.studentListResponse.users; let idx = index"
+          (click)="navigateTo(student.id)"
+        >
+          <th scope="row">{{ idx + 1 }}</th>
+          <td>{{ student.first_name }} {{ student.last_name }}</td>
+          <td>{{ student.id }}</td>
+          <td>{{ student.job }}</td>
+          <td>
+            {{ student.date_of_birth | SacDateToAge }} (
+            {{ student.date_of_birth | date: "mediumDate" }}
+            )
+          </td>
+          <td>{{ student.gender }}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="d-flex align-items-center p-2">
+      <lib-pagination
+        style="margin-left: auto"
+        *ngIf="obj.studentListResponse?.users?.length > 0"
+        [availableRecords]="obj.studentListResponse.total_users"
+        [currentPageSize]="currentPageLimit"
+        [currentPage]="currentPage"
+        (clickedPage)="changePage($event)"
+      ></lib-pagination>
+    </div>
+  </ng-container>
 </ng-container>

@@ -20,4 +20,15 @@
       </tr>
     </tbody>
   </table>
+
+  <div class="d-flex align-items-center p-2">
+    <lib-pagination
+      style="margin-left: auto"
+      *ngIf="obj.postsResponse?.blogs.length > 0"
+      [availableRecords]="obj.postsResponse.total_blogs"
+      [currentPageSize]="currentPageLimit"
+      [currentPage]="currentPage"
+      (clickedPage)="changePage($event)"
+    ></lib-pagination>
+  </div>
 </ng-container>
