@@ -1,15 +1,45 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { SlingStudentResponse } from './interfaces';
+import { map, Observable, switchMap } from 'rxjs';
+import {
+  SlingPost,
+  SlingPostListResponse,
+  SlingStudent,
+  SlingStudentListResponse,
+} from './interfaces';
 
 @Injectable({ providedIn: 'root' })
 export class SlingAcademyService {
   constructor(private _http: HttpClient) {}
 
-  public getStudents(): Observable<SlingStudentResponse> {
+  public getStudents(): Observable<SlingStudentListResponse> {
     const endpoint = 'https://api.slingacademy.com/v1/sample-data/users';
 
     return this._http.get<any>(endpoint);
+  }
+
+  public getStudentById(id: string): Observable<SlingStudent> {
+    const endpoint = `https://api.slingacademy.com/v1/sample-data/users/${id}`;
+
+    return this._http.get<SlingStudent>(endpoint);
+  }
+
+  public getPostsByStudentId(studentId: string): Observable<SlingPost[]> {
+    const endpoint = `https://api.slingacademy.com/v1/sample-data/blog-posts`;
+
+    // API has no search parameter for posts
+    // therefore we need to get all posts and then filter for the student ID
+    return this._http.get<SlingPostListResponse>(endpoint).pipe(
+      switchMap((firstResp: SlingPostListResponse) =>
+        this._http.get<SlingPostListResponse>(
+          endpoint + `?limit=${firstResp.total_blogs}`,
+        ),
+      ),
+      map((secondResp: SlingPostListResponse) => {
+        return secondResp.blogs.filter(
+          (post: SlingPost) => post.user_id === Number(studentId),
+        );
+      }),
+    );
   }
 }

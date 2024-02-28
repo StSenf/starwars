@@ -1,0 +1,58 @@
+<div class="row">
+  <div class="col-md-4 col-lg-2">
+    <div class="card-body text-center">
+      <img
+        src="{{ student.profile_picture }}"
+        alt="avatar"
+        class="student-image rounded-circle img-fluid"
+      />
+      <h5 class="my-3">{{ student.first_name }} {{ student.last_name }}</h5>
+      <p class="text-muted mb-1">{{ student.job }}</p>
+      <p class="text-muted mb-4">{{ student.city }}, {{ student.state }}</p>
+    </div>
+  </div>
+  <div class="col-md-8 col-lg-10">
+    <h3 class="mb-2">Details</h3>
+    <ul class="list-group">
+      <li class="list-group-item">Student ID: {{ student.id }}</li>
+      <li class="list-group-item">
+        Birth date: {{ student.date_of_birth | date: "mediumDate" }}
+      </li>
+      <li class="list-group-item">Gender: {{ student.gender }}</li>
+      <li class="list-group-item">Email: {{ student.email }}</li>
+      <li class="list-group-item">Phone: {{ student.phone }}</li>
+      <li class="list-group-item">
+        Address: {{ student.street }} {{ student.city }} ({{ student.state }})
+      </li>
+      <li class="list-group-item">Origin: {{ student.country }}</li>
+    </ul>
+
+    <h3 class="mt-4 mb-2">Written posts</h3>
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Title</th>
+          <th scope="col">Description</th>
+          <th scope="col">Created at</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          *ngFor="let post of studentPosts; let idx = index"
+          (click)="navigateTo(post.id)"
+        >
+          <th scope="row">{{ idx + 1 }}</th>
+          <td>{{ post.title }}</td>
+          <td>{{ post.description }}</td>
+          <td>{{ post.created_at | date: "mediumDate" }}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3 class="mt-4 mb-2">
+      Photos of {{ student.first_name }} {{ student.last_name }}
+    </h3>
+    <p>... not implemented yet</p>
+  </div>
+</div>

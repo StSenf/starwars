@@ -1,17 +1,20 @@
 import { Routes } from '@angular/router';
-import { SacStudentListComponent } from './sac-student-list/sac-student-list.component';
+import { SacStudentListComponent } from '../sac-student-list/sac-student-list.component';
+import { SacStudentDetailComponent } from '../sac-student-list/student-detail/sac-student-detail.component';
+import { PostResolverByStudentId } from './sac-post-by-studentId.resolver';
+import { StudentDetailResolver } from './sac-student-detail.resolver';
 
 export const routes: Routes = [
   { path: 'students', component: SacStudentListComponent },
-  // {
-  //   path: 'student/:id',
-  //   component: SacStudentDetailComponent,
-  //   resolve: {
-  //     studentPosts: PostResolverByStudentId,
-  //     studentPhotos: PhotoResolverByStudentId,
-  //     studentDetails: StudentDetailResolver,
-  //   },
-  // },
+  {
+    path: 'student/:id',
+    component: SacStudentDetailComponent,
+    resolve: {
+      studentPosts: PostResolverByStudentId,
+      // studentPhotos: PhotoResolverByStudentId,
+      studentDetails: StudentDetailResolver,
+    },
+  },
   // {
   //   path: 'photos',
   //   loadComponent: () =>

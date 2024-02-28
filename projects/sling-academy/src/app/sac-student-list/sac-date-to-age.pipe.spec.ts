@@ -21,6 +21,6 @@ describe('SacDateToAgePipe', () => {
   });
 
   it('should return phrase if person not born yet', () => {
-    expect(pipe.transform('2200-04-26T00:00:00')).toBe('person not born yet');
+    expect(pipe.transform('2200-01-21T00:00:00')).toBe('person not born yet');
   });
 });

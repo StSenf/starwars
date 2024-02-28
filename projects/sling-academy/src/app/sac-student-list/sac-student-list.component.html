@@ -11,7 +11,10 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let student of obj.apiResponse.users; let idx = index">
+      <tr
+        *ngFor="let student of obj.apiResponse.users; let idx = index"
+        (click)="navigateTo(student.id)"
+      >
         <th scope="row">{{ idx + 1 }}</th>
         <td>{{ student.first_name }} {{ student.last_name }}</td>
         <td>{{ student.id }}</td>

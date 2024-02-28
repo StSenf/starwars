@@ -16,16 +16,17 @@ export class SacDateToAgePipe implements PipeTransform {
     const today: Date = new Date();
 
     let yearsOfAge: number = today.getFullYear() - birthDate.getFullYear();
-    let age: string;
+    let age: string = yearsOfAge.toString();
 
-    if (
-      yearsOfAge > 0 &&
-      (today.getMonth() < birthDate.getMonth() ||
+    if (yearsOfAge > 0) {
+      if (
+        today.getMonth() < birthDate.getMonth() ||
         (today.getMonth() == birthDate.getMonth() &&
-          today.getDate() < birthDate.getDate()))
-    ) {
-      yearsOfAge--;
-      age = yearsOfAge.toString();
+          today.getDate() < birthDate.getDate())
+      ) {
+        yearsOfAge--;
+        age = yearsOfAge.toString();
+      }
     } else {
       age = 'person not born yet';
     }
