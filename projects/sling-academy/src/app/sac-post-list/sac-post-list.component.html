@@ -1,0 +1,23 @@
+<ng-container *ngIf="{ postsResponse: postsResponse$ | async } as obj">
+  <table *ngIf="obj.postsResponse" class="table table-hover">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Title</th>
+        <th scope="col">Description</th>
+        <th scope="col">Created at</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr
+        *ngFor="let post of obj.postsResponse.blogs; let idx = index"
+        (click)="navigateTo(post.id)"
+      >
+        <th scope="row">{{ idx + 1 }}</th>
+        <td>{{ post.title }}</td>
+        <td>{{ post.description }}</td>
+        <td>{{ post.created_at | date: "mediumDate" }}</td>
+      </tr>
+    </tbody>
+  </table>
+</ng-container>

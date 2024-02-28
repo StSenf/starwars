@@ -37,8 +37,6 @@ export class SacStudentDetailComponent {
   }
 
   navigateTo(id: number): void {
-    // ToDo: need to implement post detail page
-    console.log('not implemented yet');
-    // this._router.navigate(['student/' + id]);
+    this._router.navigate(['post/' + id]);
   }
 }

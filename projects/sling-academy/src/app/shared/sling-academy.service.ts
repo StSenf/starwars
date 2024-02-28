@@ -12,19 +12,19 @@ import {
 export class SlingAcademyService {
   constructor(private _http: HttpClient) {}
 
-  public getStudents(): Observable<SlingStudentListResponse> {
+  getStudents(): Observable<SlingStudentListResponse> {
     const endpoint = 'https://api.slingacademy.com/v1/sample-data/users';
 
-    return this._http.get<any>(endpoint);
+    return this._http.get<SlingStudentListResponse>(endpoint);
   }
 
-  public getStudentById(id: string): Observable<SlingStudent> {
+  getStudentById(id: string): Observable<SlingStudent> {
     const endpoint = `https://api.slingacademy.com/v1/sample-data/users/${id}`;
 
     return this._http.get<SlingStudent>(endpoint);
   }
 
-  public getPostsByStudentId(studentId: string): Observable<SlingPost[]> {
+  getPostsByStudentId(studentId: string): Observable<SlingPost[]> {
     const endpoint = `https://api.slingacademy.com/v1/sample-data/blog-posts`;
 
     // API has no search parameter for posts
@@ -41,5 +41,17 @@ export class SlingAcademyService {
         );
       }),
     );
+  }
+
+  getPosts(): Observable<SlingPostListResponse> {
+    const endpoint = 'https://api.slingacademy.com/v1/sample-data/blog-posts';
+
+    return this._http.get<SlingPostListResponse>(endpoint);
+  }
+
+  getPostById(id: string): Observable<SlingPost> {
+    const endpoint = `https://api.slingacademy.com/v1/sample-data/blog-posts/${id}`;
+
+    return this._http.get<SlingPost>(endpoint);
   }
 }

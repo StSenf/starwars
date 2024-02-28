@@ -26,7 +26,9 @@ export class SacStudentListComponent implements OnInit {
       .getStudents()
       .pipe(filter((res) => !!res === true));
 
-    this.apiResponse$.subscribe((res) => console.log('api response', res));
+    this.apiResponse$.subscribe((res) =>
+      console.log('student list response', res),
+    );
   }
 
   navigateTo(id: number): void {
