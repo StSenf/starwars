@@ -2,25 +2,52 @@
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.0.9.
 
-## Development server
+## About
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+This project contains two applications (`Star Wars Playground` and `Sling Academy`) and one library (`Shared Components`). The components of the library can be used in all projects.
+
+## Running a project
+
+Simply use a command
+
+- `npm run start:starwars` or
+- `npm run start:sling`
+
+and navigate to `http://localhost:4200/`.
+
+## Development instructions
+
+To start developing in either of the applications, you need to run them and additionally run the library in watch mode. To achieve this, run the following commands:
+
+- `npm run start:starwars` and, optionally, `npm run watch:shared` in two different Terminals
+- `npm run start:sling` and, optionally, `npm run watch:shared` in two different Terminals
+
+Then navigate to `http://localhost:4200/`. The projects will automatically reload if you change any source files.
+
+## Running unit tests
+
+To run unit tests of a specific project in a headless Chrome browser in watch mode, use the following commands:
+
+- `npm run test:starwars` 
+- `npm run test:sling`
+- `npm run test:shared`
+
+To run all unit tests use `npm run test:all`
 
 ## Code scaffolding
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+Run `ng g c COMPONENT_NAME --project PROJECT_NAME` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module --project PROJECT_NAME`.
 
 ## Build
 
 Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
 
-## Running unit tests
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+## Missing e2e implementation
 
-## Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+There is no e2e test setup provided for this project.
+To use e2e tests, you need to first add a package that implements end-to-end testing capabilities.
+Then you can run `ng e2e` to execute the end-to-end tests via the platform of your choice.
 
 ## Further help
 

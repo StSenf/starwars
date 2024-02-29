@@ -2,23 +2,28 @@
 
 This library was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.1.0.
 
+## About
+
+This library contains simple components that are shared amongst several projects. To use these components, see how to build the library.
+
 ## Code scaffolding
 
-Run `ng generate component component-name --project shared-components` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module --project shared-components`.
+Run `ng g c COMPONENT_NAME --project shared-components` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module --project shared-components`.
 > Note: Don't forget to add `--project shared-components` or else it will be added to the default project in your `angular.json` file. 
-
-## Build
-
-Run `ng build shared-components` to build the project. The build artifacts will be stored in the `dist/` directory.
-
-## Publishing
-
-After building your library with `ng build shared-components`, go to the dist folder `cd dist/shared-components` and run `npm publish`.
 
 ## Running unit tests
 
-Run `ng test shared-components` to execute the unit tests via [Karma](https://karma-runner.github.io).
+Run `npm run test:shared` to run all unit tests in a headless Chrome browser in watch mode.
+Alternatively run `ng test shared-components` to execute the unit tests.
 
-## Further help
+## Build
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+You can watch for file changes and build the library with the command `npm run watch:shared`.
+Alternatively run `ng build shared-components` to build the library. The build artifacts will be stored in the `dist/` directory.
+
+## Publishing
+
+After building your library, go to the dist folder `cd dist/shared-components` and run `npm publish`.
+
+
+

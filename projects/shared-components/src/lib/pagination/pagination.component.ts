@@ -119,42 +119,48 @@ export class LibPaginationComponent implements OnInit {
     let isLeadingDotsSet = false;
     let isTrailingDotsSet = false;
 
-    for (let i = 1; i <= totalPagesCount; i++) {
-      const isIFirstTwoPages = i <= totalPagesCount - (totalPagesCount - 2);
-      const isILastTwoPages = i >= totalPagesCount - 1;
-      const isIInRangeOfPrevAndNxtTwoPagesOfCurrentPage =
-        i >= currentPage - 2 && i <= currentPage + 2;
-
-      const areThereMoreThenTwoPrevOfCurrentPage =
-        i > totalPagesCount - (totalPagesCount - 2) && i < currentPage - 2;
-      const areThereMoreThenTwoNxtOfCurrentPage =
-        i > currentPage + 2 && i < totalPagesCount - 1;
-
-      if (
-        isIFirstTwoPages ||
-        isIInRangeOfPrevAndNxtTwoPagesOfCurrentPage ||
-        isILastTwoPages
-      ) {
-        // pushes the first and last two pages to array
-        // and pushes the prev and next two of the current page to array
-        // e.g. current page = 17; total pages = 100; array => [1, 2, 15, 16, 17, 18, 19, 99, 100]
+    if (totalPagesCount <= 9) {
+      for (let i = 1; i <= totalPagesCount; i++) {
         availablePages.push(i);
-      } else if (
-        areThereMoreThenTwoPrevOfCurrentPage &&
-        isLeadingDotsSet === false
-      ) {
-        // push dots once if there are more than 2 previous pages of current
-        // e.g. current page = 17; total pages = 100; array => [1, 2, .., 15, 16, 17, 18, 19, 99, 100]
-        availablePages.push('...');
-        isLeadingDotsSet = true;
-      } else if (
-        areThereMoreThenTwoNxtOfCurrentPage &&
-        isTrailingDotsSet === false
-      ) {
-        // push dots once if there are more than 2 next pages of current
-        // e.g. current page = 17; total pages = 100; array => [1, 2, 15, 16, 17, 18, 19, '...',  99, 100]
-        availablePages.push('...');
-        isTrailingDotsSet = true;
+      }
+    } else {
+      for (let i = 1; i <= totalPagesCount; i++) {
+        const isIFirstTwoPages = i <= totalPagesCount - (totalPagesCount - 2);
+        const isILastTwoPages = i >= totalPagesCount - 1;
+        const isIInRangeOfPrevAndNxtTwoPagesOfCurrentPage =
+          i >= currentPage - 2 && i <= currentPage + 2;
+
+        const areThereMoreThenTwoPrevOfCurrentPage =
+          i > totalPagesCount - (totalPagesCount - 2) && i < currentPage - 2;
+        const areThereMoreThenTwoNxtOfCurrentPage =
+          i > currentPage + 2 && i < totalPagesCount - 1;
+
+        if (
+          isIFirstTwoPages ||
+          isIInRangeOfPrevAndNxtTwoPagesOfCurrentPage ||
+          isILastTwoPages
+        ) {
+          // pushes the first and last two pages to array
+          // and pushes the prev and next two of the current page to array
+          // e.g. current page = 17; total pages = 100; array => [1, 2, 15, 16, 17, 18, 19, 99, 100]
+          availablePages.push(i);
+        } else if (
+          areThereMoreThenTwoPrevOfCurrentPage &&
+          isLeadingDotsSet === false
+        ) {
+          // push dots once if there are more than 2 previous pages of current
+          // e.g. current page = 17; total pages = 100; array => [1, 2, .., 15, 16, 17, 18, 19, 99, 100]
+          availablePages.push('...');
+          isLeadingDotsSet = true;
+        } else if (
+          areThereMoreThenTwoNxtOfCurrentPage &&
+          isTrailingDotsSet === false
+        ) {
+          // push dots once if there are more than 2 next pages of current
+          // e.g. current page = 17; total pages = 100; array => [1, 2, 15, 16, 17, 18, 19, '...',  99, 100]
+          availablePages.push('...');
+          isTrailingDotsSet = true;
+        }
       }
     }
 

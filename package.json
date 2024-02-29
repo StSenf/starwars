@@ -3,10 +3,17 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
     "build": "ng build",
+    "test": "ng test",
+    "test:all": "ng test --watch=false",
+    "test:starwars": "ng test --project=starwars-playground --browsers ChromeHeadless",
+    "test:sling": "ng test --project=sling-academy --browsers ChromeHeadless",
+    "test:shared": "ng test --project=shared-components --browsers ChromeHeadless",
+    "start": "ng serve",
+    "start:starwars": "ng serve --project=starwars-playground",
+    "start:sling": "ng serve --project=sling-academy",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "watch:shared": "ng build shared-components --watch"
   },
   "private": true,
   "dependencies": {
