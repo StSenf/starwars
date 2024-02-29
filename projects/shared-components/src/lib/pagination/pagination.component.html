@@ -1,5 +1,7 @@
 <ng-container
-  *ngIf="{ availablePagesCount: availablePagesCount$ | async } as obj"
+  *ngIf="{
+    availablePages: availablePages$ | async
+  } as obj"
 >
   <ul class="pagination">
     <li
@@ -10,16 +12,16 @@
       <span class="page-link">Previous</span>
     </li>
     <li
-      [ngClass]="{ active: i + 1 === currentPage }"
-      *ngFor="let _ of [].constructor(obj.availablePagesCount); let i = index"
+      [ngClass]="{ active: page === currentPage, disabled: page === '...' }"
+      *ngFor="let page of obj.availablePages; let i = index"
       class="page-item"
-      (click)="changePage(i + 1)"
+      (click)="changePage(page)"
     >
-      <span class="page-link">{{ i + 1 }}</span>
+      <span class="page-link">{{ page }}</span>
     </li>
     <li
       class="page-item"
-      [ngClass]="{ disabled: currentPage === obj.availablePagesCount }"
+      [ngClass]="{ disabled: currentPage === availablePagesCount }"
       (click)="clickNext()"
     >
       <span class="page-link">Next</span>
