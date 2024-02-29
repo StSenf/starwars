@@ -12,7 +12,6 @@
     "start": "ng serve",
     "start:starwars": "ng serve --project=starwars-playground",
     "start:sling": "ng serve --project=sling-academy",
-    "watch": "ng build --watch --configuration development",
     "watch:shared": "ng build shared-components --watch"
   },
   "private": true,

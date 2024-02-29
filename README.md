@@ -1,17 +1,19 @@
-# 2024StarWars
+# Angular multi projects project
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.0.9.
 
 ## About
 
 This project contains two applications (`Star Wars Playground` and `Sling Academy`) and one library (`Shared Components`). The components of the library can be used in all projects.
+The root project is a showcase for the shared component library.
 
 ## Running a project
 
 Simply use a command
 
-- `npm run start:starwars` or
-- `npm run start:sling`
+- `ng serve` (starts the showcase)
+- `npm run start:starwars` (starts the star wars project)
+- `npm run start:sling` (starts the sling academy project)
 
 and navigate to `http://localhost:4200/`.
 
@@ -19,8 +21,11 @@ and navigate to `http://localhost:4200/`.
 
 To start developing in either of the applications, you need to run them and additionally run the library in watch mode. To achieve this, run the following commands:
 
-- `npm run start:starwars` and, optionally, `npm run watch:shared` in two different Terminals
-- `npm run start:sling` and, optionally, `npm run watch:shared` in two different Terminals
+- `npm run watch:shared` and `ng serve`
+- `npm run watch:shared` and `npm run start:starwars`
+- `npm run watch:shared` and `npm run start:sling`
+  
+in two different Terminals
 
 Then navigate to `http://localhost:4200/`. The projects will automatically reload if you change any source files.
 

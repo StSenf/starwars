@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "2024_Star_Wars": {
+    "shared-components-showcase": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -70,10 +70,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "2024_Star_Wars:build:production"
+              "buildTarget": "shared-components-showcase:build:production"
             },
             "development": {
-              "buildTarget": "2024_Star_Wars:build:development"
+              "buildTarget": "shared-components-showcase:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -81,7 +81,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "buildTarget": "2024_Star_Wars:build"
+            "buildTarget": "shared-components-showcase:build"
           }
         },
         "test": {
@@ -100,102 +100,6 @@
             "styles": [
               "@angular/material/prebuilt-themes/indigo-pink.css",
               "src/styles.scss"
-            ],
-            "scripts": []
-          }
-        }
-      }
-    },
-    "starwars-playground": {
-      "projectType": "application",
-      "schematics": {
-        "@schematics/angular:component": {
-          "style": "scss"
-        }
-      },
-      "root": "projects/starwars-playground",
-      "sourceRoot": "projects/starwars-playground/src",
-      "prefix": "sw",
-      "architect": {
-        "build": {
-          "builder": "@angular-devkit/build-angular:application",
-          "options": {
-            "outputPath": "dist/starwars-playground",
-            "index": "projects/starwars-playground/src/index.html",
-            "browser": "projects/starwars-playground/src/main.ts",
-            "polyfills": [
-              "zone.js"
-            ],
-            "tsConfig": "projects/starwars-playground/tsconfig.app.json",
-            "inlineStyleLanguage": "scss",
-            "assets": [
-              "projects/starwars-playground/src/favicon.ico",
-              "projects/starwars-playground/src/assets"
-            ],
-            "styles": [
-              "projects/starwars-playground/src/styles.scss",
-              "@angular/material/prebuilt-themes/indigo-pink.css"
-            ],
-            "scripts": []
-          },
-          "configurations": {
-            "production": {
-              "budgets": [
-                {
-                  "type": "initial",
-                  "maximumWarning": "500kb",
-                  "maximumError": "1mb"
-                },
-                {
-                  "type": "anyComponentStyle",
-                  "maximumWarning": "2kb",
-                  "maximumError": "4kb"
-                }
-              ],
-              "outputHashing": "all"
-            },
-            "development": {
-              "optimization": false,
-              "extractLicenses": false,
-              "sourceMap": true
-            }
-          },
-          "defaultConfiguration": "production"
-        },
-        "serve": {
-          "builder": "@angular-devkit/build-angular:dev-server",
-          "configurations": {
-            "production": {
-              "buildTarget": "starwars-playground:build:production"
-            },
-            "development": {
-              "buildTarget": "starwars-playground:build:development"
-            }
-          },
-          "defaultConfiguration": "development"
-        },
-        "extract-i18n": {
-          "builder": "@angular-devkit/build-angular:extract-i18n",
-          "options": {
-            "buildTarget": "starwars-playground:build"
-          }
-        },
-        "test": {
-          "builder": "@angular-devkit/build-angular:karma",
-          "options": {
-            "polyfills": [
-              "zone.js",
-              "zone.js/testing"
-            ],
-            "tsConfig": "projects/starwars-playground/tsconfig.spec.json",
-            "inlineStyleLanguage": "scss",
-            "assets": [
-              "projects/starwars-playground/src/favicon.ico",
-              "projects/starwars-playground/src/assets"
-            ],
-            "styles": [
-              "projects/starwars-playground/src/styles.scss",
-              "@angular/material/prebuilt-themes/indigo-pink.css"
             ],
             "scripts": []
           }
@@ -323,6 +227,102 @@
             ],
             "styles": [
               "projects/sling-academy/src/styles.scss"
+            ],
+            "scripts": []
+          }
+        }
+      }
+    },
+    "starwars-playground": {
+      "projectType": "application",
+      "schematics": {
+        "@schematics/angular:component": {
+          "style": "scss"
+        }
+      },
+      "root": "projects/starwars-playground",
+      "sourceRoot": "projects/starwars-playground/src",
+      "prefix": "sw",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:application",
+          "options": {
+            "outputPath": "dist/starwars-playground",
+            "index": "projects/starwars-playground/src/index.html",
+            "browser": "projects/starwars-playground/src/main.ts",
+            "polyfills": [
+              "zone.js"
+            ],
+            "tsConfig": "projects/starwars-playground/tsconfig.app.json",
+            "inlineStyleLanguage": "scss",
+            "assets": [
+              "projects/starwars-playground/src/favicon.ico",
+              "projects/starwars-playground/src/assets"
+            ],
+            "styles": [
+              "projects/starwars-playground/src/styles.scss",
+              "@angular/material/prebuilt-themes/indigo-pink.css"
+            ],
+            "scripts": []
+          },
+          "configurations": {
+            "production": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "500kb",
+                  "maximumError": "1mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "2kb",
+                  "maximumError": "4kb"
+                }
+              ],
+              "outputHashing": "all"
+            },
+            "development": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "configurations": {
+            "production": {
+              "buildTarget": "starwars-playground:build:production"
+            },
+            "development": {
+              "buildTarget": "starwars-playground:build:development"
+            }
+          },
+          "defaultConfiguration": "development"
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "buildTarget": "starwars-playground:build"
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ],
+            "tsConfig": "projects/starwars-playground/tsconfig.spec.json",
+            "inlineStyleLanguage": "scss",
+            "assets": [
+              "projects/starwars-playground/src/favicon.ico",
+              "projects/starwars-playground/src/assets"
+            ],
+            "styles": [
+              "projects/starwars-playground/src/styles.scss",
+              "@angular/material/prebuilt-themes/indigo-pink.css"
             ],
             "scripts": []
           }

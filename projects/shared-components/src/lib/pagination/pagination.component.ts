@@ -90,7 +90,7 @@ export class LibPaginationComponent implements OnInit {
 
   protected clickNext(): void {
     const nxt: number = this.currentPage + 1;
-    if (nxt < this.availablePagesCount) {
+    if (nxt <= this.availablePagesCount) {
       this.clickedPage.next(nxt);
     }
   }
