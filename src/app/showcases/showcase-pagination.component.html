@@ -1,0 +1,42 @@
+<h3>Pagination</h3>
+<p>
+  The component always shows the first and last two pages plus the current one,
+  and it's two previous and next pages. If there are more then 9 pages to be
+  shown in the pagination, dots will be used to reduce the amount of rendered
+  HTML elements (e.g. [1, 2, '...', 15, 16, 17, 18, 19, '...', 99, 100]).
+</p>
+
+<h6 class="mb-3">Configuration:</h6>
+
+<div class="d-flex mb-4">
+  <div class="form-group small me-2">
+    <label for="inputTotalRecords" class="form-label"> Total records: </label>
+    <input
+      [formControl]="paginationTotalRecordsCtrl"
+      type="number"
+      min="1"
+      id="inputTotalRecords"
+      class="form-control"
+    />
+  </div>
+
+  <div class="form-group small">
+    <label for="inputPageSize" class="form-label"> Page size: </label>
+    <input
+      [formControl]="paginationPageSizeCtrl"
+      type="number"
+      id="inputPageSize"
+      min="1"
+      class="form-control"
+    />
+  </div>
+</div>
+
+<h6 class="mb-3">Component in action:</h6>
+
+<lib-pagination
+  [availableRecords]="paginationTotalRecords"
+  [currentPageSize]="paginationPageSize"
+  [currentPage]="paginationCurrentPage"
+  (clickedPage)="changePage($event)"
+></lib-pagination>

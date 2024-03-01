@@ -1,0 +1,38 @@
+<h3>Toggle</h3>
+<p>
+  The toggle component renders a toggle/switch with a label text on the right to
+  it. Optionally a tooltip text can be provided. The tooltip is only shown, when
+  a text is provided.
+</p>
+
+<h6 class="mb-3">Configuration:</h6>
+
+<div class="d-flex mb-4">
+  <div class="form-group larger me-2">
+    <label for="inputLabelToggle" class="form-label"> Label text: </label>
+    <input
+      [formControl]="toggleLabelCtrl"
+      type="text"
+      id="inputLabelToggle"
+      class="form-control"
+    />
+  </div>
+
+  <div class="form-group larger">
+    <label for="inputTooltip" class="form-label">Tooltip text: </label>
+    <input
+      [formControl]="toggleTooltipCtrl"
+      type="text"
+      id="inputTooltip"
+      class="form-control"
+    />
+  </div>
+</div>
+
+<h6 class="mb-3">Component in action:</h6>
+
+<lib-toggle
+  [labelText]="toggleLabelText"
+  [formControl]="toggleCtrl"
+  [tooltipText]="toggleTooltipText"
+></lib-toggle>

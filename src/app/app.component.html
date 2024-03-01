@@ -24,182 +24,21 @@
 
   <div class="row">
     <div class="col-md-8 col-lg-6 col">
-      <h3>Pagination</h3>
-      <p>
-        The component always shows the first and last two pages plus the current
-        one, and it's two previous and next pages. If there are more then 9
-        pages to be shown in the pagination, dots will be used to reduce the
-        amount of rendered HTML elements (e.g. [1, 2, '...', 15, 16, 17, 18, 19,
-        '...', 99, 100]).
-      </p>
-
-      <h6 class="mb-3">Configuration:</h6>
-
-      <div class="d-flex mb-4">
-        <div class="form-group small me-2">
-          <label for="inputTotalRecords" class="form-label">
-            Total records:
-          </label>
-          <input
-            [formControl]="paginationTotalRecordsCtrl"
-            type="number"
-            min="1"
-            id="inputTotalRecords"
-            class="form-control"
-          />
-        </div>
-
-        <div class="form-group small">
-          <label for="inputPageSize" class="form-label"> Page size: </label>
-          <input
-            [formControl]="paginationPageSizeCtrl"
-            type="number"
-            id="inputPageSize"
-            min="1"
-            class="form-control"
-          />
-        </div>
-      </div>
-
-      <h6 class="mb-3">Component in action:</h6>
-
-      <lib-pagination
-        [availableRecords]="paginationTotalRecords"
-        [currentPageSize]="paginationPageSize"
-        [currentPage]="paginationCurrentPage"
-        (clickedPage)="changePage($event)"
-      ></lib-pagination>
+      <showcase-pagination></showcase-pagination>
     </div>
-
     <hr />
   </div>
 
   <div class="row">
     <div class="col-md-8 col-lg-6 col">
-      <h3>Endpoint Display Value</h3>
-      <p>
-        This component renders a plain span-Element with data it fetches from a
-        HTTP request.
-      </p>
-
-      <h6 class="mb-3">Configuration:</h6>
-
-      <div class="d-flex mb-4">
-        <div class="form-group small me-2">
-          <label for="inputEndpointOption" class="form-label">
-            Choose endpoint:
-          </label>
-          <select
-            id="inputEndpointOption"
-            class="form-select"
-            style="width: auto"
-            [formControl]="endpointCtrl"
-          >
-            <option *ngFor="let ec of endpointConfiguration" [ngValue]="ec">
-              {{ ec.selectOption }}
-            </option>
-          </select>
-        </div>
-
-        <div class="form-group small">
-          <label for="inputEndpointProperty" class="form-label">
-            Choose property:
-          </label>
-          <select
-            id="inputEndpointProperty"
-            class="form-select"
-            style="width: auto"
-            [formControl]="endpointPropertyCtrl"
-          >
-            <option
-              *ngFor="let option of endpointPropertyOptions"
-              [ngValue]="option"
-            >
-              {{ option }}
-            </option>
-          </select>
-        </div>
-
-        <button
-          *ngIf="endpointChoiceMade === true"
-          type="button"
-          class="btn btn-info"
-          (click)="clearSelection()"
-        >
-          Clear selection
-        </button>
-      </div>
-
-      <h6 class="mb-3">Component in action:</h6>
-
-      <ng-container
-        *ngIf="
-          endpointChoiceMade === true &&
-            endpointCurrentEp &&
-            endpointCurrentProp;
-          else InfoTpl
-        "
-      >
-        <lib-endpoint-display-value
-          [endpoint]="endpointCurrentEp"
-          [propertyToDisplay]="endpointCurrentProp"
-        ></lib-endpoint-display-value>
-        <small id="passwordHelpBlock" class="form-text text-muted">
-          You did choose the endpoint <i>{{ endpointCurrentEp }}</i> and the
-          property
-          <i>{{ endpointCurrentProp }}</i>
-        </small>
-      </ng-container>
-      <ng-template #InfoTpl
-        >Please choose endpoint and property above.</ng-template
-      >
+      <showcase-endpoint-display-value></showcase-endpoint-display-value>
     </div>
-
     <hr />
   </div>
 
   <div class="row">
-    <div class="col-md-8 col-lg-6 col">
-      <h3>Toggle</h3>
-      <p>
-        The toggle component renders a toggle/switch with a label text on the
-        right to it. Optionally a tooltip text can be provided. The tooltip is
-        only shown, when a text is provided.
-      </p>
-
-      <h6 class="mb-3">Configuration:</h6>
-
-      <div class="d-flex mb-4">
-        <div class="form-group larger me-2">
-          <label for="inputLabelToggle" class="form-label"> Label text: </label>
-          <input
-            [formControl]="toggleLabelCtrl"
-            type="text"
-            id="inputLabelToggle"
-            class="form-control"
-          />
-        </div>
-
-        <div class="form-group larger">
-          <label for="inputTooltip" class="form-label">Tooltip text: </label>
-          <input
-            [formControl]="toggleTooltipCtrl"
-            type="text"
-            id="inputTooltip"
-            class="form-control"
-          />
-        </div>
-      </div>
-
-      <h6 class="mb-3">Component in action:</h6>
-
-      <lib-toggle
-        [labelText]="toggleLabelText"
-        [formControl]="toggleCtrl"
-        [tooltipText]="toggleTooltipText"
-      ></lib-toggle>
-    </div>
-
+    <div class="col-md-8 col-lg-6 col"></div>
+    <showcase-toggle></showcase-toggle>
     <hr />
   </div>
 
