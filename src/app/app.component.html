@@ -76,6 +76,90 @@
 
   <div class="row">
     <div class="col-md-8 col-lg-6 col">
+      <h3>Endpoint Display Value</h3>
+      <p>
+        This component renders a plain span-Element with data it fetches from a
+        HTTP request.
+      </p>
+
+      <h6 class="mb-3">Configuration:</h6>
+
+      <div class="d-flex mb-4">
+        <div class="form-group small me-2">
+          <label for="inputEndpointOption" class="form-label">
+            Choose endpoint:
+          </label>
+          <select
+            id="inputEndpointOption"
+            class="form-select"
+            style="width: auto"
+            [formControl]="endpointCtrl"
+          >
+            <option *ngFor="let ec of endpointConfiguration" [ngValue]="ec">
+              {{ ec.selectOption }}
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group small">
+          <label for="inputEndpointProperty" class="form-label">
+            Choose property:
+          </label>
+          <select
+            id="inputEndpointProperty"
+            class="form-select"
+            style="width: auto"
+            [formControl]="endpointPropertyCtrl"
+          >
+            <option
+              *ngFor="let option of endpointPropertyOptions"
+              [ngValue]="option"
+            >
+              {{ option }}
+            </option>
+          </select>
+        </div>
+
+        <button
+          *ngIf="endpointChoiceMade === true"
+          type="button"
+          class="btn btn-info"
+          (click)="clearSelection()"
+        >
+          Clear selection
+        </button>
+      </div>
+
+      <h6 class="mb-3">Component in action:</h6>
+
+      <ng-container
+        *ngIf="
+          endpointChoiceMade === true &&
+            endpointCurrentEp &&
+            endpointCurrentProp;
+          else InfoTpl
+        "
+      >
+        <lib-endpoint-display-value
+          [endpoint]="endpointCurrentEp"
+          [propertyToDisplay]="endpointCurrentProp"
+        ></lib-endpoint-display-value>
+        <small id="passwordHelpBlock" class="form-text text-muted">
+          You did choose the endpoint <i>{{ endpointCurrentEp }}</i> and the
+          property
+          <i>{{ endpointCurrentProp }}</i>
+        </small>
+      </ng-container>
+      <ng-template #InfoTpl
+        >Please choose endpoint and property above.</ng-template
+      >
+    </div>
+
+    <hr />
+  </div>
+
+  <div class="row">
+    <div class="col-md-8 col-lg-6 col">
       <h3>Toggle</h3>
       <p>
         The toggle component renders a toggle/switch with a label text on the
@@ -120,7 +204,7 @@
   </div>
 
   <div class="row">
-    <div class="col-md-8 col-lg-6 col">
+    <div class="col-md-8 col-lg-6 col mb-5">
       <h3>Loading modal</h3>
       <p>
         The loading modal is a component that must be used with the NgbModal
