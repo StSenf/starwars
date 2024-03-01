@@ -8,8 +8,8 @@
       "@angular/localize"
     ]
   },
-  "include": [
-    "**/*.spec.ts",
-    "**/*.d.ts"
-  ]
+//  "include": [
+//    "**/*.spec.ts",
+//    "**/*.d.ts"
+//  ]
 }
