@@ -1,3 +1,4 @@
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { of } from 'rxjs';
 import { SwapiService } from '../services/swapi.service';
@@ -13,6 +14,7 @@ describe('SwDisplayValueComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
+      imports: [HttpClientTestingModule],
       providers: [
         {
           provide: SwapiService,
@@ -29,10 +31,8 @@ describe('SwDisplayValueComponent', () => {
 
     component.endpoint = 'mock';
     component.rowIndex = 101;
-    component.colConfig = {
-      columnDisplayProperty: 'mock',
-      urlDisplayProperty: 'mock',
-    } as SwTableColConfig;
+    component.propertyToDisplay = 'title';
+    component.colName = 'species';
 
     fixture.detectChanges();
   });
@@ -41,10 +41,8 @@ describe('SwDisplayValueComponent', () => {
     let result = '';
     const expectedTitle = 'A new hope';
 
-    component.colConfig = {
-      columnDisplayProperty: 'mock',
-      urlDisplayProperty: 'title',
-    } as SwTableColConfig;
+    component.propertyToDisplay = 'title';
+    component.colName = 'mock';
 
     spyOn(swapiSrv, 'getCellData').and.returnValue(
       of({
@@ -65,10 +63,8 @@ describe('SwDisplayValueComponent', () => {
   it('should return undefined if properties dont match', () => {
     let result = '';
 
-    component.colConfig = {
-      columnDisplayProperty: 'mock',
-      urlDisplayProperty: 'NOT_MATCHING_PROPERTY_NAME',
-    } as SwTableColConfig;
+    component.propertyToDisplay = 'NOT_MATCHING_PROPERTY_NAME';
+    component.colName = 'mock';
 
     spyOn(swapiSrv, 'getCellData').and.returnValue(
       of({

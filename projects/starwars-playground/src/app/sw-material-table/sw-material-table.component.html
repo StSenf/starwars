@@ -31,15 +31,10 @@
     <ng-container matColumnDef="homeworld">
       <th mat-header-cell *matHeaderCellDef>Home</th>
       <td mat-cell *matCellDef="let row">
-        <sw-display-value
+        <lib-endpoint-display-value
           [endpoint]="row.homeworld"
-          [colConfig]="{
-            columnDisplayProperty: 'homeworld',
-            urlDisplayProperty: 'name',
-            columnTitle: 'Home',
-            areCellValuesUrl: true
-          }"
-        ></sw-display-value>
+          [propertyToDisplay]="'name'"
+        ></lib-endpoint-display-value>
       </td>
     </ng-container>
 

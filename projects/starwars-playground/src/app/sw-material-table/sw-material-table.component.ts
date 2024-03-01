@@ -24,9 +24,9 @@ import {
   switchMap,
   takeUntil,
 } from 'rxjs';
+import { LibEndpointDisplayValueComponent } from 'shared-components';
 
 import { SwApiResponse, SwPerson } from '../shared/model/interfaces';
-import { SwDisplayValueComponent } from '../shared/sw-display-value-component/sw-display-value.component';
 
 @Component({
   standalone: true,
@@ -39,7 +39,7 @@ import { SwDisplayValueComponent } from '../shared/sw-display-value-component/sw
     MatTableModule,
     MatFormFieldModule,
     MatInputModule,
-    SwDisplayValueComponent,
+    LibEndpointDisplayValueComponent,
   ],
 })
 export class SwMaterialTableComponent implements OnInit, OnDestroy {

@@ -266,7 +266,7 @@ describe('SwapiService', () => {
 
     it('should change element status from loading to loaded if response happened', () => {
       swapiService
-        .getCellData(endpoint, correspondingRowIdx, colName, true)
+        .getCellData(endpoint, correspondingRowIdx, colName)
         .subscribe();
 
       const req = httpTestingController.expectOne(endpoint);
@@ -296,7 +296,7 @@ describe('SwapiService', () => {
       } as HttpErrorResponse;
 
       swapiService
-        .getCellData(endpoint, correspondingRowIdx, colName, true)
+        .getCellData(endpoint, correspondingRowIdx, colName)
         .subscribe({
           next: () => {},
           error: (err) => (result = err),
@@ -314,18 +314,6 @@ describe('SwapiService', () => {
         correspondingRowIdx,
         colName,
       });
-    });
-
-    it('should not change element status if "useLoadingState" parameter is not set', () => {
-      swapiService
-        .getCellData(endpoint, correspondingRowIdx, colName)
-        .subscribe();
-
-      const req = httpTestingController.expectOne(endpoint);
-      expect(req.request.method).toEqual('GET');
-      req.flush(mockResponse);
-
-      expect(changeElmSpy).not.toHaveBeenCalled();
     });
   });
 });

@@ -164,19 +164,19 @@
     <ng-container *ngIf="colConfig.isUrlMultiple === true">
       <sw-display-value
         *ngFor="let url of swObject[colConfig.columnDisplayProperty]"
-        [colConfig]="colConfig"
+        [colName]="colConfig.columnDisplayProperty"
         [endpoint]="url"
+        [propertyToDisplay]="colConfig.urlDisplayProperty"
         [rowIndex]="rowIdx"
-        [useLoadingState]="true"
       ></sw-display-value>
     </ng-container>
 
     <ng-container *ngIf="colConfig.isUrlMultiple === false">
       <sw-display-value
-        [colConfig]="colConfig"
+        [colName]="colConfig.columnDisplayProperty"
         [endpoint]="swObject[colConfig.columnDisplayProperty]"
+        [propertyToDisplay]="colConfig.urlDisplayProperty"
         [rowIndex]="rowIdx"
-        [useLoadingState]="true"
       ></sw-display-value>
     </ng-container>
   </ng-container>

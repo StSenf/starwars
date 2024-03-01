@@ -39,10 +39,10 @@ export class LibEndpointDisplayValueComponent implements OnInit {
 
   displayValue$: Observable<any>; // gets displayed in template
 
-  constructor(private _http: HttpClient) {}
+  constructor(protected http: HttpClient) {}
 
   ngOnInit(): void {
-    this.displayValue$ = this._http
+    this.displayValue$ = this.http
       .get(this.endpoint)
       .pipe(pluck(this.propertyToDisplay));
   }
