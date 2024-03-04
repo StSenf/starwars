@@ -1,6 +1,6 @@
 <ng-container
   *ngIf="{
-    isLoaded: isLoaded$ | async,
+    isApiCallCompleted: isApiCallCompleted$ | async,
     apiResponse: apiResponse$ | async,
     currentTableConfig: currentTableConfig$ | async,
     areAllEndpointsLoaded: areAllEndpointsLoaded$ | async,
@@ -65,13 +65,21 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngIf="obj.areAllEndpointsLoaded === false || obj.isLoaded == false">
+      <tr
+        *ngIf="
+          obj.areAllEndpointsLoaded === false ||
+          obj.isApiCallCompleted === false
+        "
+      >
         <td [attr.colspan]="obj.currentTableConfig?.columnConfig?.length + 1">
           ... is loading
         </td>
       </tr>
       <tr
-        *ngIf="obj.isLoaded === true && obj.apiResponse?.results?.length === 0"
+        *ngIf="
+          obj.isApiCallCompleted === true &&
+          obj.apiResponse?.results?.length === 0
+        "
       >
         <td [attr.colspan]="obj.currentTableConfig?.columnConfig?.length + 1">
           No data found
@@ -86,7 +94,8 @@
             <div
               [ngClass]="
                 obj.isEndpointsLoadingListActive === false ||
-                (obj.areAllEndpointsLoaded === true && obj.isLoaded === true)
+                (obj.areAllEndpointsLoaded === true &&
+                  obj.isApiCallCompleted === true)
                   ? 'is-auto'
                   : 'is-squeezed'
               "

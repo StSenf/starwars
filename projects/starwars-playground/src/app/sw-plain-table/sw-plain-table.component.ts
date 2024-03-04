@@ -75,8 +75,7 @@ export class SwPlainTableComponent implements OnInit, OnDestroy {
   );
 
   apiResponse$: Observable<SwApiResponse>;
-  isLoaded$ = new BehaviorSubject<boolean>(false);
-  isEndpointListEmpty$: Observable<boolean>;
+  isApiCallCompleted$ = new BehaviorSubject<boolean>(false);
   areAllEndpointsLoaded$: Observable<boolean>;
   isEndpointsLoadingListActive$: Observable<boolean>;
 
@@ -115,7 +114,6 @@ export class SwPlainTableComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.isEndpointListEmpty$ = this._loadingStateService.isEndpointListEmpty();
     this.isEndpointsLoadingListActive$ =
       this._loadingStateService.isLoadingStateActive();
     this.areAllEndpointsLoaded$ =
@@ -152,7 +150,7 @@ export class SwPlainTableComponent implements OnInit, OnDestroy {
         startWith(STANDARD_TABLE_CONFIG),
         tap((tableConfigSelection: SwTableConfig) => {
           this.currentTableConfig$.next(tableConfigSelection); // table head etc. must be re-rendered
-          this.isLoaded$.next(false); // show loading indicator again
+          this.isApiCallCompleted$.next(false); // show loading indicator again
           this.searchControl.setValue(''); // clear search input
           this.currentColumnSorting$.next(
             this.searchFirstSortableColumn(tableConfigSelection),
@@ -230,7 +228,7 @@ export class SwPlainTableComponent implements OnInit, OnDestroy {
         },
       ),
       tap((response: SwApiResponse) => {
-        this.isLoaded$.next(!!response);
+        this.isApiCallCompleted$.next(!!response);
         this.availableRecords = response.count || response.total_records;
         console.log('api response', response);
       }),
