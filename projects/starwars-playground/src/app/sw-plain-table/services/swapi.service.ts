@@ -3,20 +3,25 @@ import { Injectable } from '@angular/core';
 import { catchError, finalize, Observable, tap, throwError } from 'rxjs';
 
 import {
-  ColumnSorting,
-  SortDirection,
   SwApiResponse,
   SwFilm,
   SwPerson,
   SwPlanet,
   SwSpecies,
   SwStarship,
+  SwVehicle,
+} from '../../shared/interfaces';
+import {
+  ColumnSorting,
+  SortDirection,
   SwTableColConfig,
   SwTableConfig,
-  SwVehicle,
-} from '../model/interfaces';
-import { LoadingStatus, StatusEntry } from '../model/loading-state.interfaces';
-import { LoadingStateService } from './loading-state.service';
+} from '../model/plain-table.interfaces';
+import {
+  LoadingStatus,
+  StatusEntry,
+} from './loading-state/loading-state.interfaces';
+import { LoadingStateService } from './loading-state/loading-state.service';
 
 @Injectable({ providedIn: 'root' })
 export class SwapiService {

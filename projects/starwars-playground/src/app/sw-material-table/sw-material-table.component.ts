@@ -26,7 +26,7 @@ import {
 } from 'rxjs';
 import { LibEndpointDisplayValueComponent } from 'shared-components';
 
-import { SwApiResponse, SwPerson } from '../shared/model/interfaces';
+import { SwApiResponse, SwPerson } from '../shared/interfaces';
 
 @Component({
   standalone: true,

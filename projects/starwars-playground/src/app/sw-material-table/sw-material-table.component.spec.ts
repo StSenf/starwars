@@ -6,7 +6,6 @@ import { MatInputModule } from '@angular/material/input';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatTableModule } from '@angular/material/table';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { SwDisplayValueComponent } from '../shared/sw-display-value-component/sw-display-value.component';
 
 import { SwMaterialTableComponent } from './sw-material-table.component';
 
@@ -24,7 +23,6 @@ describe('SwMaterialTableComponent', () => {
         MatFormFieldModule,
         MatInputModule,
         HttpClientTestingModule,
-        SwDisplayValueComponent,
       ],
     }).compileComponents();
   }));

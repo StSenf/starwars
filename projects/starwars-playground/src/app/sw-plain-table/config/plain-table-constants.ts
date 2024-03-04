@@ -2,8 +2,8 @@ import {
   PageLimitOptions,
   SortDirection,
   SwTableConfig,
-} from '../../shared/model/interfaces';
-import { TABLE_CONFIG } from './table-config';
+} from '../model/plain-table.interfaces';
+import { TABLE_CONFIG } from './plain-table-config';
 
 export const STANDARD_TABLE_CONFIG: SwTableConfig = TABLE_CONFIG[1];
 

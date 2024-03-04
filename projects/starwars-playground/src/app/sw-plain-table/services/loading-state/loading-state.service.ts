@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { STANDARD_STABLE_TEMPLATE_CHOICE } from '../../sw-plain-table/config/table-constants';
-import { LoadingStatus, StatusEntry } from '../model/loading-state.interfaces';
+import { STANDARD_STABLE_TEMPLATE_CHOICE } from '../../config/plain-table-constants';
+import { LoadingStatus, StatusEntry } from './loading-state.interfaces';
 
 /**
  * Reason for this service:

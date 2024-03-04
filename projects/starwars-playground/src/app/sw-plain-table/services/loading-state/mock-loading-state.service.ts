@@ -1,5 +1,5 @@
 import { Observable, of } from 'rxjs';
-import { StatusEntry } from '../model/loading-state.interfaces';
+import { StatusEntry } from './loading-state.interfaces';
 
 export class MockLoadingStateService {
   createEndpointLoadingList(list: StatusEntry[]) {}

@@ -4,15 +4,14 @@ import {
   HttpTestingController,
 } from '@angular/common/http/testing';
 import { TestBed, waitForAsync } from '@angular/core/testing';
-import { MockLoadingStateService } from '../mocks/mock-loading-state.service';
+import { SwApiResponse, SwPerson } from '../../shared/interfaces';
+import { SortDirection, SwTableConfig } from '../model/plain-table.interfaces';
 import {
-  SortDirection,
-  SwApiResponse,
-  SwPerson,
-  SwTableConfig,
-} from '../model/interfaces';
-import { LoadingStatus, StatusEntry } from '../model/loading-state.interfaces';
-import { LoadingStateService } from './loading-state.service';
+  LoadingStatus,
+  StatusEntry,
+} from './loading-state/loading-state.interfaces';
+import { LoadingStateService } from './loading-state/loading-state.service';
+import { MockLoadingStateService } from './loading-state/mock-loading-state.service';
 import { SwapiService } from './swapi.service';
 import Spy = jasmine.Spy;
 

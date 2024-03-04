@@ -1,9 +1,9 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { of } from 'rxjs';
+import { SwFilm } from '../../shared/interfaces';
+import { MockSwapiService } from '../services/mock-swapi.service';
 import { SwapiService } from '../services/swapi.service';
-import { MockSwapiService } from '../mocks/mock-swapi.service';
-import { SwFilm, SwTableColConfig } from '../model/interfaces';
 import { SwDisplayValueComponent } from './sw-display-value.component';
 
 describe('SwDisplayValueComponent', () => {
