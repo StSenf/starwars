@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { STANDARD_STABLE_TEMPLATE_CHOICE } from '../../config/plain-table-constants';
 import { LoadingStatus, StatusEntry } from './loading-state.interfaces';
 
 /**
@@ -31,9 +30,6 @@ import { LoadingStatus, StatusEntry } from './loading-state.interfaces';
 export class LoadingStateService {
   private _endpointLoadingList$ = new BehaviorSubject<StatusEntry[]>([]);
   private _endpointLoadingList: StatusEntry[] = [];
-  private _isLoadingStateActive$ = new BehaviorSubject<boolean>(
-    STANDARD_STABLE_TEMPLATE_CHOICE,
-  );
 
   /** Creates new endpoint loading list */
   createEndpointLoadingList(list: StatusEntry[]): void {
@@ -65,38 +61,16 @@ export class LoadingStateService {
   }
 
   /**
-   * Returns true if loading state is active.
-   */
-  isLoadingStateActive(): Observable<boolean> {
-    return this._isLoadingStateActive$;
-  }
-
-  /**
-   * Changes if loading state is active (= true) or inactive (= false).
-   * @param isActive
-   */
-  changeIsLoadingStateActive(isActive: boolean): void {
-    this._isLoadingStateActive$.next(isActive);
-  }
-
-  /**
-   * Returns true if the list has no entries.
-   */
-  isEndpointListEmpty(): Observable<boolean> {
-    return this._endpointLoadingList$.pipe(
-      map((list: StatusEntry[]) => list.length === 0),
-    );
-  }
-
-  /**
    * Returns true if all elements are of status "loaded".
    */
   areAllEndpointsLoaded(): Observable<boolean> {
     return this._endpointLoadingList$.pipe(
-      map((list: StatusEntry[]) =>
-        list.every(
-          (entry: StatusEntry) => entry.status === LoadingStatus.LOADED,
-        ),
+      map(
+        (list: StatusEntry[]) =>
+          list.length > 0 &&
+          list.every(
+            (entry: StatusEntry) => entry.status === LoadingStatus.LOADED,
+          ),
       ),
     );
   }
