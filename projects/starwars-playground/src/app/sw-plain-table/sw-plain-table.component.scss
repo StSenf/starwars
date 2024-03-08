@@ -1,12 +1,22 @@
 div {
-  &.is-auto {
+  &.visible-styling {
     height: auto;
     visibility: visible;
   }
 
-  &.is-squeezed {
+  &.invisible-styling {
     height: 1px;
     overflow: hidden;
     visibility: hidden;
+  }
+}
+
+table {
+  thead {
+    th {
+      &:first-of-type {
+        width: 30px;
+      }
+    }
   }
 }

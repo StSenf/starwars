@@ -3,11 +3,18 @@
     isApiCallCompleted: isApiCallCompleted$ | async,
     apiResponse: apiResponse$ | async,
     currentTableConfig: currentTableConfig$ | async,
-    areAllEndpointsLoaded: areAllEndpointsLoaded$ | async,
-    isEndpointsLoadingListActive: isEndpointsLoadingListActive$ | async,
+    isStableTplRenderingActive: isStableTplRenderingActive$ | async,
     currentColumnSorting: currentColumnSorting$ | async
   } as obj"
 >
+  <div
+    *ngIf="obj.isApiCallCompleted === false && !!obj.apiResponse === false"
+    class="alert alert-danger rounded-0"
+    role="alert"
+  >
+    Something went wrong with Api request.
+  </div>
+
   <div class="row p-2 mb-3">
     <div class="col-4">
       <div class="form-group">
@@ -46,7 +53,12 @@
     </div>
   </div>
 
-  <table class="table p-2">
+  <table
+    swStableLoading
+    [isTableApiCallCompleted]="isApiCallCompleted$"
+    [isStableRenderingActive]="isStableTplRenderingActive$"
+    class="table p-2"
+  >
     <thead class="thead-dark">
       <tr>
         <th scope="col">#</th>
@@ -67,16 +79,6 @@
     <tbody>
       <tr
         *ngIf="
-          obj.areAllEndpointsLoaded === false ||
-          obj.isApiCallCompleted === false
-        "
-      >
-        <td [attr.colspan]="obj.currentTableConfig?.columnConfig?.length + 1">
-          ... is loading
-        </td>
-      </tr>
-      <tr
-        *ngIf="
           obj.isApiCallCompleted === true &&
           obj.apiResponse?.results?.length === 0
         "
@@ -92,13 +94,12 @@
           </th>
           <td *ngFor="let config of obj.currentTableConfig.columnConfig">
             <div
-              [ngClass]="
-                obj.isEndpointsLoadingListActive === false ||
-                (obj.areAllEndpointsLoaded === true &&
-                  obj.isApiCallCompleted === true)
-                  ? 'is-auto'
-                  : 'is-squeezed'
-              "
+              #swStableLoadingContentCell
+              [ngClass]="{
+                'invisible-styling':
+                  obj.isStableTplRenderingActive === true &&
+                  isLimitControlActive === false
+              }"
             >
               <ng-container
                 *ngTemplateOutlet="
@@ -141,7 +142,7 @@
 
   <lib-toggle
     [labelText]="'Activate stable template rendering'"
-    [formControl]="loadingStateToggle"
+    [formControl]="stableTplRenderingToggle"
     [tooltipText]="
       'When activated, the rendering of the table contents will appear at once. This may take up to 30 seconds.'
     "

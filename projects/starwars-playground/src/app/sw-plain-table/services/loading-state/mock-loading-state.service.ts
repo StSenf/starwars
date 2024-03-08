@@ -3,12 +3,9 @@ import { StatusEntry } from './loading-state.interfaces';
 
 export class MockLoadingStateService {
   createEndpointLoadingList(list: StatusEntry[]) {}
+  resetEndpointLoadingList() {}
   changeElementStatus() {}
-  isEndpointListEmpty(): Observable<boolean> {
-    return of(true);
-  }
   areAllEndpointsLoaded(): Observable<boolean> {
     return of(false);
   }
-  resetEndpointLoadingList() {}
 }

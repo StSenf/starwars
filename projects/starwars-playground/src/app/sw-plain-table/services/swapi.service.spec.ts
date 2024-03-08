@@ -247,7 +247,9 @@ describe('SwapiService', () => {
       expect(req.request.method).toEqual('GET');
       req.flush('', errorObj);
 
-      expect(result).toBe(`Error while fetching data. Error ${errorObj}`);
+      expect(result).toBe(
+        `Error while fetching table data. Http failure response for www.mock.de?&page=1&limit=10: 404 Not Found`,
+      );
       expect(createSpy).not.toHaveBeenCalled();
     });
   });

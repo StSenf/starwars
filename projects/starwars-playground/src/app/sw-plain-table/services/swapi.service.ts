@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, finalize, Observable, tap, throwError } from 'rxjs';
 
@@ -85,8 +85,8 @@ export class SwapiService {
         );
         this._loadingStateService.createEndpointLoadingList(statusEntryList);
       }),
-      catchError((error) => {
-        return throwError(`Error while fetching data. Error ${error}`);
+      catchError((error: HttpErrorResponse) => {
+        return throwError(`Error while fetching table data. ${error.message}`);
       }),
     );
   }

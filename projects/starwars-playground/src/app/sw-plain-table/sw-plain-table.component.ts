@@ -31,6 +31,7 @@ import {
   STANDARD_TABLE_CONFIG,
 } from './config/plain-table-constants';
 import { SwDisplayValueComponent } from './display-value-component/sw-display-value.component';
+import { SwStableLoadingDirective } from './loading/loading.directive';
 
 import {
   ColumnSorting,
@@ -38,7 +39,6 @@ import {
   SwTableColConfig,
   SwTableConfig,
 } from './model/plain-table.interfaces';
-import { LoadingStateService } from './services/loading-state/loading-state.service';
 import { SwapiService } from './services/swapi.service';
 import { SwSortComponent } from './sorting/sw-sort.component';
 
@@ -56,6 +56,7 @@ import { SwSortComponent } from './sorting/sw-sort.component';
     NgTemplateOutlet,
     SwSortComponent,
     SwDisplayValueComponent,
+    SwStableLoadingDirective,
     LibToggleComponent,
     LibPaginationComponent,
   ],
@@ -76,8 +77,9 @@ export class SwPlainTableComponent implements OnInit, OnDestroy {
 
   apiResponse$: Observable<SwApiResponse>;
   isApiCallCompleted$ = new BehaviorSubject<boolean>(false);
-  areAllEndpointsLoaded$: Observable<boolean>;
-  isEndpointsLoadingListActive$: Observable<boolean>;
+  isStableTplRenderingActive$ = new BehaviorSubject<boolean>(
+    STANDARD_STABLE_TEMPLATE_CHOICE,
+  );
 
   searchControl: FormControl = new FormControl({
     value: '',
@@ -95,12 +97,16 @@ export class SwPlainTableComponent implements OnInit, OnDestroy {
     value: STANDARD_LIMIT_ENDPOINT_CHOICE,
     disabled: false,
   });
-  loadingStateToggle: FormControl = new FormControl({
+  stableTplRenderingToggle: FormControl = new FormControl({
     value: STANDARD_STABLE_TEMPLATE_CHOICE,
     disabled: false,
   });
 
-  private _onDestroy = new Subject<any>();
+  get isLimitControlActive(): boolean {
+    return this.limitEndpointControl.getRawValue();
+  }
+
+  private _onDestroy$ = new Subject<any>();
   private _pageChange$ = new BehaviorSubject<number>(this.currentPage);
   private _previousPageLimit: number;
   private _previousSearchTerm: string = '';
@@ -108,21 +114,13 @@ export class SwPlainTableComponent implements OnInit, OnDestroy {
   private _previousLimitEndpointChoice: boolean =
     STANDARD_LIMIT_ENDPOINT_CHOICE;
 
-  constructor(
-    private _loadingStateService: LoadingStateService,
-    private _swapiService: SwapiService,
-  ) {}
+  constructor(private _swapiService: SwapiService) {}
 
   ngOnInit(): void {
-    this.isEndpointsLoadingListActive$ =
-      this._loadingStateService.isLoadingStateActive();
-    this.areAllEndpointsLoaded$ =
-      this._loadingStateService.areAllEndpointsLoaded();
-
-    this.loadingStateToggle.valueChanges
-      .pipe(takeUntil(this._onDestroy))
+    this.stableTplRenderingToggle.valueChanges
+      .pipe(takeUntil(this._onDestroy$))
       .subscribe((newState: boolean) => {
-        this._loadingStateService.changeIsLoadingStateActive(newState);
+        this.isStableTplRenderingActive$.next(newState);
       });
 
     /**
@@ -209,6 +207,10 @@ export class SwPlainTableComponent implements OnInit, OnDestroy {
               ? 'disable'
               : 'enable';
             this.searchControl[searchCtrlStatus]();
+            const stableCtrlStatus = isLimitEndpointActive
+              ? 'disable'
+              : 'enable';
+            this.stableTplRenderingToggle[stableCtrlStatus]();
             const limitCtrlStatus = isLimitEndpointActive
               ? 'enable'
               : 'disable';
@@ -236,7 +238,8 @@ export class SwPlainTableComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this._onDestroy.next(null);
+    this._onDestroy$.next(null);
+    this._onDestroy$.complete();
   }
 
   /**
