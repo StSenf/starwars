@@ -11,4 +11,5 @@ export const routes: Routes = [
       ),
   },
   { path: '', redirectTo: '/plain-table', pathMatch: 'full' },
+  { path: '**', redirectTo: '/plain-table', pathMatch: 'full' }, // Wildcard route for a not found page
 ];
