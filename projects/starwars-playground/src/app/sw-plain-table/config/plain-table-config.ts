@@ -2,8 +2,8 @@ import { SwTableConfig } from '../model/plain-table.interfaces';
 
 export const TABLE_CONFIG: SwTableConfig[] = [
   {
-    endpoint: 'https://swapi.dev/api/people',
-    limitEndpoint: 'https://www.swapi.tech/api/people',
+    dotDevEndpoint: 'https://swapi.dev/api/people',
+    dotTechEndpoint: 'https://www.swapi.tech/api/people',
     searchPhrase: 'Search person name',
     tableConfigControlValue: 'People',
     columnConfig: [
@@ -43,8 +43,8 @@ export const TABLE_CONFIG: SwTableConfig[] = [
     ],
   },
   {
-    endpoint: 'https://swapi.dev/api/planets/',
-    limitEndpoint: 'https://www.swapi.tech/api/planets',
+    dotDevEndpoint: 'https://swapi.dev/api/planets/',
+    dotTechEndpoint: 'https://www.swapi.tech/api/planets',
     searchPhrase: 'Search planet name',
     tableConfigControlValue: 'Planets',
     columnConfig: [
@@ -79,8 +79,8 @@ export const TABLE_CONFIG: SwTableConfig[] = [
     ],
   },
   {
-    endpoint: 'https://swapi.dev/api/films/',
-    limitEndpoint: 'https://www.swapi.tech/api/films',
+    dotDevEndpoint: 'https://swapi.dev/api/films/',
+    dotTechEndpoint: 'https://www.swapi.tech/api/films',
     searchPhrase: 'Search film title',
     tableConfigControlValue: 'Films',
     columnConfig: [
@@ -122,8 +122,8 @@ export const TABLE_CONFIG: SwTableConfig[] = [
     ],
   },
   {
-    endpoint: 'https://swapi.dev/api/starships/',
-    limitEndpoint: 'https://www.swapi.tech/api/starships',
+    dotDevEndpoint: 'https://swapi.dev/api/starships/',
+    dotTechEndpoint: 'https://www.swapi.tech/api/starships',
     searchPhrase: 'Search starship name',
     tableConfigControlValue: 'Starships',
     columnConfig: [
@@ -162,8 +162,8 @@ export const TABLE_CONFIG: SwTableConfig[] = [
     ],
   },
   {
-    endpoint: 'https://swapi.dev/api/vehicles/',
-    limitEndpoint: 'https://www.swapi.tech/api/vehicles',
+    dotDevEndpoint: 'https://swapi.dev/api/vehicles/',
+    dotTechEndpoint: 'https://www.swapi.tech/api/vehicles',
     searchPhrase: 'Search vehicle name',
     tableConfigControlValue: 'Vehicles',
     columnConfig: [
@@ -209,8 +209,8 @@ export const TABLE_CONFIG: SwTableConfig[] = [
     ],
   },
   {
-    endpoint: 'https://swapi.dev/api/species/',
-    limitEndpoint: 'https://www.swapi.tech/api/species',
+    dotDevEndpoint: 'https://swapi.dev/api/species/',
+    dotTechEndpoint: 'https://www.swapi.tech/api/species',
     searchPhrase: 'Search species name',
     tableConfigControlValue: 'Species',
     columnConfig: [

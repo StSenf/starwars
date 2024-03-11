@@ -26,6 +26,6 @@ export const PAGE_LIMIT_OPTIONS: PageLimitOptions[] = [
     value: 50,
   },
 ];
-export const STANDARD_LIMIT_ENDPOINT_CHOICE = false;
+export const STANDARD_IS_DOT_TECH_ENDPOINT_ACTIVE_CHOICE = false;
 export const STANDARD_STABLE_TEMPLATE_CHOICE = true;
 export const STANDARD_SORT_DIRECTION = SortDirection.ASC;

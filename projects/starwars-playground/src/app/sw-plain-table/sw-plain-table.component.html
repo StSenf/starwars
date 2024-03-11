@@ -98,7 +98,7 @@
               [ngClass]="{
                 'invisible-styling':
                   obj.isStableTplRenderingActive === true &&
-                  isLimitControlActive === false
+                  isDotTechEndpointActive === false
               }"
             >
               <ng-container
@@ -133,7 +133,7 @@
 
   <lib-toggle
     [labelText]="'Activate limit endpoints'"
-    [formControl]="limitEndpointControl"
+    [formControl]="sourceEndpointControl"
     [tooltipText]="
       'When activated, the table will fetch its data from swapi.tech instead of swapi.dev. Only swapi.tech can process requests with the parameter limit.'
     "

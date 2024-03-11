@@ -21,8 +21,8 @@ describe('SwapiService', () => {
   let httpTestingController: HttpTestingController;
 
   const commonTableConfig: SwTableConfig = {
-    endpoint: 'www.mock.de',
-    limitEndpoint: 'www.limit-mock.de',
+    dotDevEndpoint: 'www.mock.de',
+    dotTechEndpoint: 'www.limit-mock.de',
     searchPhrase: 'Search mock',
     tableConfigControlValue: 'mock',
     columnConfig: [],
@@ -104,8 +104,8 @@ describe('SwapiService', () => {
         ],
       } as SwApiResponse;
       const mockTableConfig: SwTableConfig = {
-        endpoint: 'www.mock.de',
-        limitEndpoint: 'www.limit-mock.de',
+        dotDevEndpoint: 'www.mock.de',
+        dotTechEndpoint: 'www.limit-mock.de',
         searchPhrase: 'Search mock',
         tableConfigControlValue: 'mock',
         columnConfig: [

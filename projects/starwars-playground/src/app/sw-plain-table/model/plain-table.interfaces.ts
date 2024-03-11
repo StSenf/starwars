@@ -1,8 +1,8 @@
 export interface SwTableConfig {
-  /** Endpoint from where the table data is fetched. */
-  endpoint: string;
-  /** Possible alternate endpoint with which the limit can be added to the request. */
-  limitEndpoint?: string;
+  /** Endpoint https://swapi.dev/api/XYZ from where the table data is fetched. */
+  dotDevEndpoint: string;
+  /** Possible alternate endpoint https://www.swapi.tech/api/XYZ with which the limit can be added to the request. */
+  dotTechEndpoint?: string;
   /** Phrase that is visible in search input. */
   searchPhrase: string;
   /** Value that is visible in the select field. */

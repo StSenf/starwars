@@ -24,7 +24,7 @@ import { SwApiResponse } from '../shared/interfaces';
 import { TABLE_CONFIG } from './config/plain-table-config';
 import {
   PAGE_LIMIT_OPTIONS,
-  STANDARD_LIMIT_ENDPOINT_CHOICE,
+  STANDARD_IS_DOT_TECH_ENDPOINT_ACTIVE_CHOICE,
   STANDARD_PAGE_LIMIT,
   STANDARD_SORT_DIRECTION,
   STANDARD_STABLE_TEMPLATE_CHOICE,
@@ -93,8 +93,8 @@ export class SwPlainTableComponent implements OnInit, OnDestroy {
     value: STANDARD_TABLE_CONFIG,
     disabled: false,
   });
-  limitEndpointControl: FormControl = new FormControl({
-    value: STANDARD_LIMIT_ENDPOINT_CHOICE,
+  sourceEndpointControl: FormControl = new FormControl({
+    value: STANDARD_IS_DOT_TECH_ENDPOINT_ACTIVE_CHOICE,
     disabled: false,
   });
   stableTplRenderingToggle: FormControl = new FormControl({
@@ -102,8 +102,8 @@ export class SwPlainTableComponent implements OnInit, OnDestroy {
     disabled: false,
   });
 
-  get isLimitControlActive(): boolean {
-    return this.limitEndpointControl.getRawValue();
+  get isDotTechEndpointActive(): boolean {
+    return this.sourceEndpointControl.getRawValue();
   }
 
   private _onDestroy$ = new Subject<any>();
@@ -112,7 +112,7 @@ export class SwPlainTableComponent implements OnInit, OnDestroy {
   private _previousSearchTerm: string = '';
   private _previousTableConfig: SwTableConfig;
   private _previousLimitEndpointChoice: boolean =
-    STANDARD_LIMIT_ENDPOINT_CHOICE;
+    STANDARD_IS_DOT_TECH_ENDPOINT_ACTIVE_CHOICE;
 
   constructor(private _swapiService: SwapiService) {}
 
@@ -126,7 +126,7 @@ export class SwPlainTableComponent implements OnInit, OnDestroy {
     /**
      * Load table date on:
      *  - page change
-     *  - limit endpoint (de)activation
+     *  - source endpoint change ((de)activation of swapi.tech endpoint)
      *  - page limit change
      *  - search term change
      *  - sorting change
@@ -134,8 +134,8 @@ export class SwPlainTableComponent implements OnInit, OnDestroy {
      */
     this.apiResponse$ = combineLatest([
       this._pageChange$,
-      this.limitEndpointControl.valueChanges.pipe(
-        startWith(STANDARD_LIMIT_ENDPOINT_CHOICE),
+      this.sourceEndpointControl.valueChanges.pipe(
+        startWith(STANDARD_IS_DOT_TECH_ENDPOINT_ACTIVE_CHOICE),
       ),
       this.pageLimitControl.valueChanges.pipe(startWith(this.currentPageLimit)),
       this.searchControl.valueChanges.pipe(
@@ -159,7 +159,7 @@ export class SwPlainTableComponent implements OnInit, OnDestroy {
       switchMap(
         ([
           page,
-          isLimitEndpointActive,
+          isDotTechEndpointActive,
           pageLimit,
           enteredInput,
           columnSorting,
@@ -186,11 +186,11 @@ export class SwPlainTableComponent implements OnInit, OnDestroy {
             this._previousTableConfig = tableConfigSelection;
           }
 
-          const isNewLimitEndpointChoice: boolean =
-            isLimitEndpointActive !== this._previousLimitEndpointChoice;
-          if (isNewLimitEndpointChoice) {
+          const isNewDotTechEndpointChoice: boolean =
+            isDotTechEndpointActive !== this._previousLimitEndpointChoice;
+          if (isNewDotTechEndpointChoice) {
             if (
-              isLimitEndpointActive === false &&
+              isDotTechEndpointActive === false &&
               this.currentPageLimit !== STANDARD_PAGE_LIMIT
             ) {
               // if control is not active we must reset to standard limit
@@ -198,20 +198,20 @@ export class SwPlainTableComponent implements OnInit, OnDestroy {
               this.currentPageLimit = STANDARD_PAGE_LIMIT;
               this.pageLimitControl.setValue(STANDARD_PAGE_LIMIT);
             }
-            this.currentPage = 1; // if new limit endpoint choice, pagination should switch to page one
+            this.currentPage = 1; // if new endpoint choice, pagination should switch to page one
             this.searchControl.setValue(''); // clear search input
-            this._previousLimitEndpointChoice = isLimitEndpointActive;
+            this._previousLimitEndpointChoice = isDotTechEndpointActive;
 
             // change control status
-            const searchCtrlStatus = isLimitEndpointActive
+            const searchCtrlStatus = isDotTechEndpointActive
               ? 'disable'
               : 'enable';
             this.searchControl[searchCtrlStatus]();
-            const stableCtrlStatus = isLimitEndpointActive
+            const stableCtrlStatus = isDotTechEndpointActive
               ? 'disable'
               : 'enable';
             this.stableTplRenderingToggle[stableCtrlStatus]();
-            const limitCtrlStatus = isLimitEndpointActive
+            const limitCtrlStatus = isDotTechEndpointActive
               ? 'enable'
               : 'disable';
             this.pageLimitControl[limitCtrlStatus]();
@@ -219,9 +219,9 @@ export class SwPlainTableComponent implements OnInit, OnDestroy {
 
           return this._swapiService.getTableData(
             tableConfigSelection,
-            isLimitEndpointActive === true
-              ? tableConfigSelection.limitEndpoint
-              : tableConfigSelection.endpoint,
+            isDotTechEndpointActive === true
+              ? tableConfigSelection.dotTechEndpoint
+              : tableConfigSelection.dotDevEndpoint,
             this.currentPage,
             this.currentPageLimit,
             enteredInput,
