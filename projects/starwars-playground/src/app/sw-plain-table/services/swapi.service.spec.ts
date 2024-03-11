@@ -64,7 +64,7 @@ describe('SwapiService', () => {
           .subscribe();
 
         const req = httpTestingController.expectOne(
-          'www.mock.de?&page=13&limit=33',
+          'www.mock.de?page=13&limit=33',
         );
         expect(req.request.method).toEqual('GET');
       });
@@ -75,7 +75,7 @@ describe('SwapiService', () => {
           .subscribe();
 
         const req = httpTestingController.expectOne(
-          'www.mock.de?search=Luke&page=13&limit=33',
+          'www.mock.de?page=13&limit=33&search=Luke',
         );
         expect(req.request.method).toEqual('GET');
       });
@@ -173,7 +173,7 @@ describe('SwapiService', () => {
           .subscribe();
 
         const req = httpTestingController.expectOne(
-          'www.mock.de?&page=1&limit=10',
+          'www.mock.de?page=1&limit=10',
         );
         expect(req.request.method).toEqual('GET');
         req.flush(mockResponse);
@@ -217,7 +217,7 @@ describe('SwapiService', () => {
           .subscribe();
 
         const req = httpTestingController.expectOne(
-          'www.mock.de?&page=1&limit=10',
+          'www.mock.de?page=1&limit=10',
         );
         expect(req.request.method).toEqual('GET');
         req.flush(mockResponse);
@@ -242,13 +242,13 @@ describe('SwapiService', () => {
         });
 
       const req = httpTestingController.expectOne(
-        'www.mock.de?&page=1&limit=10',
+        'www.mock.de?page=1&limit=10',
       );
       expect(req.request.method).toEqual('GET');
       req.flush('', errorObj);
 
       expect(result).toBe(
-        `Error while fetching table data. Http failure response for www.mock.de?&page=1&limit=10: 404 Not Found`,
+        `Error while fetching table data. Http failure response for www.mock.de?page=1&limit=10: 404 Not Found`,
       );
       expect(createSpy).not.toHaveBeenCalled();
     });

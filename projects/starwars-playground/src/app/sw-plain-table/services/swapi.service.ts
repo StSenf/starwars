@@ -1,4 +1,8 @@
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import {
+  HttpClient,
+  HttpErrorResponse,
+  HttpParams,
+} from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, finalize, Observable, tap, throwError } from 'rxjs';
 
@@ -49,19 +53,16 @@ export class SwapiService {
     searchTerm?: string,
     columnSorting?: ColumnSorting,
   ): Observable<SwApiResponse> {
-    let assembledEndpoint =
-      endpoint + '?' + `&page=${page}` + `&limit=${pageLimit}`;
-    if (!!searchTerm) {
-      assembledEndpoint =
-        endpoint +
-        `?search=${searchTerm}` +
-        `&page=${page}` +
-        `&limit=${pageLimit}`;
+    let params: HttpParams = new HttpParams({
+      fromObject: { page, limit: pageLimit },
+    });
+    if (searchTerm) {
+      params = params.append('search', searchTerm);
     }
 
     this._loadingStateService.resetEndpointLoadingList();
 
-    return this._http.get<SwApiResponse>(assembledEndpoint).pipe(
+    return this._http.get<SwApiResponse>(endpoint, { params }).pipe(
       tap((resp: SwApiResponse) => {
         // sort before creating the status entry list
         const sortedResponse: SwApiResponse =
