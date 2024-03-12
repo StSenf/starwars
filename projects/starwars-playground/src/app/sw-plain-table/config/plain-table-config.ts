@@ -11,13 +11,11 @@ export const TABLE_CONFIG: SwTableConfig[] = [
         columnDisplayProperty: 'name',
         columnTitle: 'Person',
         areCellValuesUrl: false,
-        isSortable: true,
       },
       {
         columnDisplayProperty: 'birth_year',
         columnTitle: 'Birth',
         areCellValuesUrl: false,
-        isSortable: true,
       },
       {
         columnDisplayProperty: 'homeworld',
@@ -52,7 +50,6 @@ export const TABLE_CONFIG: SwTableConfig[] = [
         columnDisplayProperty: 'name',
         columnTitle: 'Planet',
         areCellValuesUrl: false,
-        isSortable: true,
       },
       {
         columnDisplayProperty: 'diameter',
@@ -93,7 +90,6 @@ export const TABLE_CONFIG: SwTableConfig[] = [
         columnDisplayProperty: 'episode_id',
         columnTitle: 'Episode',
         areCellValuesUrl: false,
-        isSortable: true,
       },
       {
         columnDisplayProperty: 'producer',

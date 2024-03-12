@@ -31,6 +31,7 @@ import {
   STANDARD_TABLE_CONFIG,
 } from './config/plain-table-constants';
 import { SwDisplayValueComponent } from './display-value-component/sw-display-value.component';
+import { SwEndpointTableRowComponent } from './endpoint-table-row/sw-endpoint-table-row.component';
 import { SwStableLoadingDirective } from './loading/loading.directive';
 
 import {
@@ -59,6 +60,7 @@ import { SwSortComponent } from './sorting/sw-sort.component';
     SwStableLoadingDirective,
     LibToggleComponent,
     LibPaginationComponent,
+    SwEndpointTableRowComponent,
   ],
 })
 export class SwPlainTableComponent implements OnInit, OnDestroy {
@@ -71,9 +73,10 @@ export class SwPlainTableComponent implements OnInit, OnDestroy {
   currentTableConfig$ = new BehaviorSubject<SwTableConfig>(
     STANDARD_TABLE_CONFIG,
   );
-  currentColumnSorting$ = new BehaviorSubject<ColumnSorting>(
-    this.searchFirstSortableColumn(STANDARD_TABLE_CONFIG),
-  );
+  currentColumnSorting$ = new BehaviorSubject<ColumnSorting>({});
+  // currentColumnSorting$ = new BehaviorSubject<ColumnSorting>(
+  //   this.searchFirstSortableColumn(STANDARD_TABLE_CONFIG),
+  // );
 
   apiResponse$: Observable<SwApiResponse>;
   isApiCallCompleted$ = new BehaviorSubject<boolean>(false);
@@ -87,7 +90,7 @@ export class SwPlainTableComponent implements OnInit, OnDestroy {
   });
   pageLimitControl: FormControl = new FormControl({
     value: this.currentPageLimit,
-    disabled: true,
+    disabled: false,
   });
   tableConfigControl: FormControl = new FormControl({
     value: STANDARD_TABLE_CONFIG,
@@ -99,7 +102,7 @@ export class SwPlainTableComponent implements OnInit, OnDestroy {
   });
   stableTplRenderingToggle: FormControl = new FormControl({
     value: STANDARD_STABLE_TEMPLATE_CHOICE,
-    disabled: false,
+    disabled: true,
   });
 
   get isDotTechEndpointActive(): boolean {
@@ -150,9 +153,9 @@ export class SwPlainTableComponent implements OnInit, OnDestroy {
           this.currentTableConfig$.next(tableConfigSelection); // table head etc. must be re-rendered
           this.isApiCallCompleted$.next(false); // show loading indicator again
           this.searchControl.setValue(''); // clear search input
-          this.currentColumnSorting$.next(
-            this.searchFirstSortableColumn(tableConfigSelection),
-          ); // change col sorting as there might be no sortable columns in the new table config
+          // this.currentColumnSorting$.next(
+          //   this.searchFirstSortableColumn(tableConfigSelection),
+          // ); // change col sorting as there might be no sortable columns in the new table config
         }),
       ),
     ]).pipe(

@@ -1,3 +1,48 @@
+/** Response object when getting data from root resources from https://www.swapi.tech/api/XYZ/ */
+export interface SwDotTechResponse {
+  message: string;
+  next: string;
+  previous: string;
+  results: SwDotTechResource[];
+  total_pages: number;
+  total_records: number;
+}
+
+/** Swapi.tech resource. Mainly carries the url to the resource.
+ * Could be a Planet, a Person and so on. */
+export interface SwDotTechResource {
+  uid: string;
+  name: string;
+  url: string;
+}
+export interface SwDotTechResourceResponse {
+  message: string;
+  result: {
+    description: string;
+    uid: number;
+    properties:
+      | SwPerson
+      | SwPlanet
+      | SwFilm
+      | SwStarship
+      | SwVehicle
+      | SwSpecies;
+  };
+}
+
+/** Response object when getting data from root resources from https://www.swapi.dev/api/XYZ/ */
+export interface SwDotDevResponse {
+  count?: number;
+  next?: string;
+  previous?: string;
+  results:
+    | SwPerson[]
+    | SwPlanet[]
+    | SwFilm[]
+    | SwStarship[]
+    | SwVehicle[]
+    | SwSpecies[];
+}
 export interface SwApiResponse {
   count?: number; // swapi.dev specific
   total_records?: number; // swapi.tech specific

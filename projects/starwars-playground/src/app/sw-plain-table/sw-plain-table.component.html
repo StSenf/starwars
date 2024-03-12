@@ -7,13 +7,13 @@
     currentColumnSorting: currentColumnSorting$ | async
   } as obj"
 >
-  <div
-    *ngIf="obj.isApiCallCompleted === false && !!obj.apiResponse === false"
-    class="alert alert-danger rounded-0"
-    role="alert"
-  >
-    Something went wrong with Api request.
-  </div>
+  <!--  <div-->
+  <!--    *ngIf="obj.isApiCallCompleted === false && !!obj.apiResponse === false"-->
+  <!--    class="alert alert-danger rounded-0"-->
+  <!--    role="alert"-->
+  <!--  >-->
+  <!--    Something went wrong with Api request.-->
+  <!--  </div>-->
 
   <div class="row p-2 mb-3">
     <div class="col-4">
@@ -53,12 +53,7 @@
     </div>
   </div>
 
-  <table
-    swStableLoading
-    [isTableApiCallCompleted]="isApiCallCompleted$"
-    [isStableRenderingActive]="isStableTplRenderingActive$"
-    class="table p-2"
-  >
+  <table class="table p-2">
     <thead class="thead-dark">
       <tr>
         <th scope="col">#</th>
@@ -88,33 +83,33 @@
         </td>
       </tr>
       <ng-container *ngIf="obj.apiResponse?.results?.length > 0">
-        <tr *ngFor="let result of obj.apiResponse?.results; let i = index">
-          <th scope="row">
-            {{ i + 1 }}
-          </th>
-          <td *ngFor="let config of obj.currentTableConfig.columnConfig">
-            <div
-              #swStableLoadingContentCell
-              [ngClass]="{
-                'invisible-styling':
-                  obj.isStableTplRenderingActive === true &&
-                  isDotTechEndpointActive === false
-              }"
-            >
-              <ng-container
-                *ngTemplateOutlet="
-                  valueTpl;
-                  context: {
-                    result: result,
-                    config: config,
-                    standard: config.areCellValuesUrl === false,
-                    rowIdx: i
-                  }
-                "
-              ></ng-container>
-            </div>
-          </td>
-        </tr>
+        <tr
+          sw-endpoint-table-row
+          *ngFor="let result of obj.apiResponse?.results; let i = index"
+          [rowIndex]="i"
+          [endpoint]="result.url"
+          [columnConfig]="obj.currentTableConfig.columnConfig"
+        ></tr>
+        <!--        <tr *ngFor="let result of obj.apiResponse?.results; let i = index">-->
+        <!--          <th scope="row">-->
+        <!--            {{ i + 1 }}-->
+        <!--          </th>-->
+        <!--          <td *ngFor="let config of obj.currentTableConfig.columnConfig">-->
+        <!--            <div>-->
+        <!--              <ng-container-->
+        <!--                *ngTemplateOutlet="-->
+        <!--                  valueTpl;-->
+        <!--                  context: {-->
+        <!--                    result: result,-->
+        <!--                    config: config,-->
+        <!--                    standard: config.areCellValuesUrl === false,-->
+        <!--                    rowIdx: i-->
+        <!--                  }-->
+        <!--                "-->
+        <!--              ></ng-container>-->
+        <!--            </div>-->
+        <!--          </td>-->
+        <!--        </tr>-->
       </ng-container>
     </tbody>
   </table>
@@ -132,7 +127,7 @@
   </select>
 
   <lib-toggle
-    [labelText]="'Activate limit endpoints'"
+    [labelText]="'Activate swapi.tech endpoint'"
     [formControl]="sourceEndpointControl"
     [tooltipText]="
       'When activated, the table will fetch its data from swapi.tech instead of swapi.dev. Only swapi.tech can process requests with the parameter limit.'

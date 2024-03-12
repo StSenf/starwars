@@ -8,6 +8,7 @@ import { catchError, finalize, Observable, tap, throwError } from 'rxjs';
 
 import {
   SwApiResponse,
+  SwDotTechResourceResponse,
   SwFilm,
   SwPerson,
   SwPlanet,
@@ -65,10 +66,10 @@ export class SwapiService {
     return this._http.get<SwApiResponse>(endpoint, { params }).pipe(
       tap((resp: SwApiResponse) => {
         // sort before creating the status entry list
-        const sortedResponse: SwApiResponse =
-          !!columnSorting === true
-            ? this.sortResponseResults(resp, columnSorting)
-            : { ...resp };
+        // const sortedResponse: SwApiResponse =
+        //   !!columnSorting === true
+        //     ? this.sortResponseResults(resp, columnSorting)
+        //     : { ...resp };
 
         // a list with all columns that have endpoint as value e.g. ["films", "homeworld"]
         const allColsWithUrl: string[] = tableConfig.columnConfig
@@ -81,7 +82,7 @@ export class SwapiService {
           );
 
         const statusEntryList: StatusEntry[] = this.createStatusEntryList(
-          sortedResponse,
+          resp,
           allColsWithUrl,
         );
         this._loadingStateService.createEndpointLoadingList(statusEntryList);
@@ -140,6 +141,10 @@ export class SwapiService {
         this._loadingStateService.changeElementStatus(statusEntry);
       }),
     );
+  }
+
+  getResource(endpoint: string): Observable<SwDotTechResourceResponse> {
+    return this._http.get<SwDotTechResourceResponse>(endpoint);
   }
 
   /**
