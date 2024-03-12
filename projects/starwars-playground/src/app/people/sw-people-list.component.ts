@@ -13,34 +13,41 @@ import {
   MatTableDataSource,
   MatTableModule,
 } from '@angular/material/table';
+import { ActivatedRoute, Data } from '@angular/router';
+import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import {
   BehaviorSubject,
   combineLatest,
   debounceTime,
   distinctUntilChanged,
   forkJoin,
-  mergeMap,
   Observable,
   startWith,
   Subject,
   switchMap,
+  take,
   takeUntil,
   tap,
 } from 'rxjs';
-import { LibEndpointDisplayValueComponent } from 'shared-components';
+import { map } from 'rxjs/operators';
+import {
+  LibEndpointDisplayValueComponent,
+  LibLoadingModalComponent,
+} from 'shared-components';
 
 import {
   SwDotTechResource,
   SwDotTechResourceResponse,
   SwDotTechResponse,
+  SwEntity,
   SwPerson,
 } from '../shared/interfaces';
 
 @Component({
   standalone: true,
   selector: 'sw-material-table',
-  templateUrl: './sw-material-table.component.html',
-  styleUrl: './sw-material-table.component.scss',
+  templateUrl: './sw-people-list.component.html',
+  styleUrl: './sw-people-list.component.scss',
   imports: [
     ReactiveFormsModule,
     MatPaginatorModule,
@@ -50,12 +57,17 @@ import {
     LibEndpointDisplayValueComponent,
   ],
 })
-export class SwMaterialTableComponent implements OnInit, OnDestroy {
+export class SwPeopleListComponent implements OnInit, OnDestroy {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatTable) table!: MatTable<SwPerson>;
 
   /** Columns displayed in the table. Columns IDs can be added, removed, or reordered. */
-  public displayedColumns = ['name', 'birth_year', 'gender', 'homeworld'];
+  public displayedColumns: string[] = [
+    'name',
+    'birth_year',
+    'gender',
+    'homeworld',
+  ];
 
   public dataSource: MatTableDataSource<SwPerson>;
   public availableRecords: number = 0;
@@ -65,11 +77,17 @@ export class SwMaterialTableComponent implements OnInit, OnDestroy {
     disabled: true,
   });
 
+  private _modalReference: NgbModalRef;
+  private _allPlanetResources: SwDotTechResource[];
   private _currentPage = 1;
   private _pageChange$ = new BehaviorSubject<number>(this._currentPage);
   private _ngDestroy$ = new Subject();
 
-  constructor(private _http: HttpClient) {}
+  constructor(
+    private _http: HttpClient,
+    private _activatedRoute: ActivatedRoute,
+    private _modalService: NgbModal,
+  ) {}
 
   // https://www.swapi.tech/api/people?page=2&limit=20 -> limit works with this endpoint
   // https://swapi.dev/api/people?page=1&limit=20 -> limit does NOT work with this endpoint
@@ -78,6 +96,10 @@ export class SwMaterialTableComponent implements OnInit, OnDestroy {
     // initial table set up
     this.dataSource = new MatTableDataSource<SwPerson>([]);
     this.dataSource.paginator = this.paginator;
+
+    this._activatedRoute.data.pipe(take(1)).subscribe((data: Data) => {
+      this._allPlanetResources = data['planets'];
+    });
 
     /**
      * Load table date on:
@@ -93,6 +115,12 @@ export class SwMaterialTableComponent implements OnInit, OnDestroy {
       ),
     ])
       .pipe(
+        tap(
+          () =>
+            (this._modalReference = this._modalService.open(
+              LibLoadingModalComponent,
+            )),
+        ),
         switchMap(([desiredPage, enteredInput]) =>
           this.load(
             ` https://www.swapi.tech/api/people`,
@@ -100,11 +128,9 @@ export class SwMaterialTableComponent implements OnInit, OnDestroy {
             enteredInput,
           ),
         ),
-        tap(
-          (resp: SwDotTechResponse) =>
-            (this.availableRecords = resp.total_records),
-        ),
-        mergeMap((resp: SwDotTechResponse) => {
+        switchMap((resp: SwDotTechResponse) => {
+          this.availableRecords = resp.total_records;
+
           let forkJoinArr: Observable<SwDotTechResourceResponse>[] =
             resp.results.map((resource: SwDotTechResource) =>
               this._http.get<SwDotTechResourceResponse>(resource.url),
@@ -112,13 +138,27 @@ export class SwMaterialTableComponent implements OnInit, OnDestroy {
 
           return forkJoin(forkJoinArr);
         }),
+        map((resp: SwDotTechResourceResponse[]) => {
+          return resp.map(
+            (res: SwDotTechResourceResponse) =>
+              res.result.properties as SwPerson,
+          );
+        }),
         takeUntil(this._ngDestroy$),
       )
-      .subscribe((resp: SwDotTechResourceResponse[]) => {
-        this.dataSource.data = resp.map(
-          (res: SwDotTechResourceResponse) => res.result.properties as SwPerson,
-        );
+      .subscribe((ppl: SwPerson[]) => {
+        this.dataSource.data = ppl.map((person: SwPerson) => ({
+          ...person,
+          homeworld: this.replaceUrlWithResourceName(
+            person,
+            'homeworld',
+            this._allPlanetResources,
+          ),
+        }));
         this.table.dataSource = this.dataSource;
+        if (this._modalReference) {
+          this._modalReference.close();
+        }
       });
   }
 
@@ -152,5 +192,27 @@ export class SwMaterialTableComponent implements OnInit, OnDestroy {
     return this._http.get<SwDotTechResponse>(
       assembledEndpoint,
     ) as Observable<SwDotTechResponse>;
+  }
+
+  /**
+   * Replaces a URL with the actual resource name.
+   * e.g.: the url for a planet is given https://www.swapi.tech/api/planet/4,
+   * and we want to know the name of the planet.
+   *
+   * @param entity
+   * @param entityPropertyWithUrl
+   * @param resourcesToCheck
+   */
+  private replaceUrlWithResourceName(
+    entity: SwEntity,
+    entityPropertyWithUrl: string,
+    resourcesToCheck: SwDotTechResource[],
+  ): string {
+    return (
+      resourcesToCheck.find(
+        (resource: SwDotTechResource) =>
+          resource.url === entity[entityPropertyWithUrl],
+      )?.name || 'no data provided'
+    );
   }
 }

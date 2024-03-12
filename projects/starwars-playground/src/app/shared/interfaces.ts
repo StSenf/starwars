@@ -3,7 +3,7 @@ export interface SwDotTechResponse {
   message: string;
   next: string;
   previous: string;
-  results: SwDotTechResource[];
+  results: SwDotTechResource[]; // attention: https://www.swapi.tech/api/films gives back "result" instead of "results"
   total_pages: number;
   total_records: number;
 }
@@ -18,44 +18,12 @@ export interface SwDotTechResource {
 export interface SwDotTechResourceResponse {
   message: string;
   result: {
-    description: string;
-    uid: number;
-    properties:
-      | SwPerson
-      | SwPlanet
-      | SwFilm
-      | SwStarship
-      | SwVehicle
-      | SwSpecies;
+    description?: string;
+    uid?: number;
+    properties: SwEntity;
   };
 }
 
-/** Response object when getting data from root resources from https://www.swapi.dev/api/XYZ/ */
-export interface SwDotDevResponse {
-  count?: number;
-  next?: string;
-  previous?: string;
-  results:
-    | SwPerson[]
-    | SwPlanet[]
-    | SwFilm[]
-    | SwStarship[]
-    | SwVehicle[]
-    | SwSpecies[];
-}
-export interface SwApiResponse {
-  count?: number; // swapi.dev specific
-  total_records?: number; // swapi.tech specific
-  next?: string;
-  previous?: string;
-  results:
-    | SwPerson[]
-    | SwPlanet[]
-    | SwFilm[]
-    | SwStarship[]
-    | SwVehicle[]
-    | SwSpecies[];
-}
 export interface SwPerson {
   name: string;
   birth_year: string;
@@ -166,3 +134,11 @@ export interface SwPlanet {
   created: string; //the ISO 8601 date format of the time that this resource was created.
   edited: string; // the ISO 8601 date format of the time that this resource was edited.
 }
+
+export type SwEntity =
+  | SwPerson
+  | SwPlanet
+  | SwFilm
+  | SwStarship
+  | SwVehicle
+  | SwSpecies;

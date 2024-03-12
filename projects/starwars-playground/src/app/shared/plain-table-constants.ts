@@ -1,11 +1,4 @@
-import {
-  PageLimitOptions,
-  SortDirection,
-  SwTableConfig,
-} from '../model/plain-table.interfaces';
-import { TABLE_CONFIG } from './plain-table-config';
-
-export const STANDARD_TABLE_CONFIG: SwTableConfig = TABLE_CONFIG[1];
+import { PageLimitOptions, SortDirection } from './plain-table.interfaces';
 
 export const STANDARD_PAGE_LIMIT = 10;
 export const PAGE_LIMIT_OPTIONS: PageLimitOptions[] = [
@@ -26,6 +19,4 @@ export const PAGE_LIMIT_OPTIONS: PageLimitOptions[] = [
     value: 50,
   },
 ];
-export const STANDARD_IS_DOT_TECH_ENDPOINT_ACTIVE_CHOICE = true;
-export const STANDARD_STABLE_TEMPLATE_CHOICE = false;
 export const STANDARD_SORT_DIRECTION = SortDirection.ASC;
