@@ -18,15 +18,23 @@ import {
   combineLatest,
   debounceTime,
   distinctUntilChanged,
+  forkJoin,
+  mergeMap,
   Observable,
   startWith,
   Subject,
   switchMap,
   takeUntil,
+  tap,
 } from 'rxjs';
 import { LibEndpointDisplayValueComponent } from 'shared-components';
 
-import { SwApiResponse, SwPerson } from '../shared/interfaces';
+import {
+  SwDotTechResource,
+  SwDotTechResourceResponse,
+  SwDotTechResponse,
+  SwPerson,
+} from '../shared/interfaces';
 
 @Component({
   standalone: true,
@@ -54,7 +62,7 @@ export class SwMaterialTableComponent implements OnInit, OnDestroy {
 
   searchControl = new FormControl({
     value: '',
-    disabled: false,
+    disabled: true,
   });
 
   private _currentPage = 1;
@@ -86,14 +94,30 @@ export class SwMaterialTableComponent implements OnInit, OnDestroy {
     ])
       .pipe(
         switchMap(([desiredPage, enteredInput]) =>
-          this.load(`https://swapi.dev/api/people`, desiredPage, enteredInput),
+          this.load(
+            ` https://www.swapi.tech/api/people`,
+            desiredPage,
+            enteredInput,
+          ),
         ),
+        tap(
+          (resp: SwDotTechResponse) =>
+            (this.availableRecords = resp.total_records),
+        ),
+        mergeMap((resp: SwDotTechResponse) => {
+          let forkJoinArr: Observable<SwDotTechResourceResponse>[] =
+            resp.results.map((resource: SwDotTechResource) =>
+              this._http.get<SwDotTechResourceResponse>(resource.url),
+            );
+
+          return forkJoin(forkJoinArr);
+        }),
         takeUntil(this._ngDestroy$),
       )
-      .subscribe((resp: SwApiResponse) => {
-        console.log(resp);
-        this.availableRecords = resp.count | resp.total_records;
-        this.dataSource.data = resp.results as SwPerson[];
+      .subscribe((resp: SwDotTechResourceResponse[]) => {
+        this.dataSource.data = resp.map(
+          (res: SwDotTechResourceResponse) => res.result.properties as SwPerson,
+        );
         this.table.dataSource = this.dataSource;
       });
   }
@@ -118,14 +142,15 @@ export class SwMaterialTableComponent implements OnInit, OnDestroy {
     endpoint: string,
     page: number,
     searchTerm?: string,
-  ): Observable<SwApiResponse> {
-    let assembledEndpoint = endpoint + '?' + `&page=${page}`;
+  ): Observable<SwDotTechResponse> {
+    let assembledEndpoint = endpoint + '?' + `page=${page}` + `&limit=10`;
     if (!!searchTerm) {
-      assembledEndpoint = endpoint + `?search=${searchTerm}` + `&page=${page}`;
+      assembledEndpoint =
+        endpoint + `?name=${searchTerm}` + `&page=1` + `&limit=10`;
     }
 
-    return this._http.get<SwApiResponse>(
+    return this._http.get<SwDotTechResponse>(
       assembledEndpoint,
-    ) as Observable<SwApiResponse>;
+    ) as Observable<SwDotTechResponse>;
   }
 }

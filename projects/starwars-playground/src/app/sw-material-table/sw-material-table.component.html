@@ -30,12 +30,7 @@
     <!-- homeworld Column -->
     <ng-container matColumnDef="homeworld">
       <th mat-header-cell *matHeaderCellDef>Home</th>
-      <td mat-cell *matCellDef="let row">
-        <lib-endpoint-display-value
-          [endpoint]="row.homeworld"
-          [propertyToDisplay]="'name'"
-        ></lib-endpoint-display-value>
-      </td>
+      <td mat-cell *matCellDef="let row">{{ row.homeworld }}</td>
     </ng-container>
 
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
