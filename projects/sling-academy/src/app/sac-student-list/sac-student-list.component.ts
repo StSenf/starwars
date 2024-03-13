@@ -43,10 +43,6 @@ export class SacStudentListComponent implements OnInit {
       }),
       filter((res: SlingStudentListResponse) => !!res === true),
     );
-
-    this.studentListResponse$.subscribe((res) =>
-      console.log('student list response', res),
-    );
   }
 
   navigateTo(id: number): void {

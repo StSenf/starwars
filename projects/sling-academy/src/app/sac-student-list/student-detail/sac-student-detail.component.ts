@@ -1,11 +1,9 @@
 import { DatePipe, NgForOf, NgIf } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Data, Router } from '@angular/router';
 import { take } from 'rxjs';
 import {
   SlingPost,
-  SlingPostListResponse,
-  SlingPostResponse,
   SlingStudent,
   SlingStudentDetailResponse,
 } from '../../shared/interfaces';
@@ -18,7 +16,7 @@ import { SacDateToAgePipe } from '../sac-date-to-age.pipe';
   styleUrls: ['./sac-student-detail.component.scss'],
   imports: [DatePipe, NgForOf, NgIf, SacDateToAgePipe],
 })
-export class SacStudentDetailComponent {
+export class SacStudentDetailComponent implements OnInit {
   student: SlingStudent;
   studentPosts: SlingPost[];
   constructor(
@@ -26,9 +24,8 @@ export class SacStudentDetailComponent {
     private _router: Router,
   ) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this._activatedRoute.data.pipe(take(1)).subscribe((data: Data) => {
-      console.log('active route data', data);
       this.student = (
         data['studentDetails'] as SlingStudentDetailResponse
       ).user;
