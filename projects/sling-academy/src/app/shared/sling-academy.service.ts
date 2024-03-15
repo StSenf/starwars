@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { map, Observable, switchMap } from 'rxjs';
 import {
@@ -16,9 +16,12 @@ export class SlingAcademyService {
     offset: number = 0,
     limit: number = 10,
   ): Observable<SlingStudentListResponse> {
-    const endpoint = `https://api.slingacademy.com/v1/sample-data/users?offset=${offset}&limit=${limit}`;
+    const params: HttpParams = new HttpParams({
+      fromObject: { offset, limit },
+    });
+    const endpoint = `https://api.slingacademy.com/v1/sample-data/users`;
 
-    return this._http.get<SlingStudentListResponse>(endpoint);
+    return this._http.get<SlingStudentListResponse>(endpoint, { params });
   }
 
   getStudentById(id: string): Observable<SlingStudent> {
@@ -50,9 +53,12 @@ export class SlingAcademyService {
     offset: number = 0,
     limit: number = 10,
   ): Observable<SlingPostListResponse> {
-    const endpoint = `https://api.slingacademy.com/v1/sample-data/blog-posts?offset=${offset}&limit=${limit}`;
+    const params: HttpParams = new HttpParams({
+      fromObject: { offset, limit },
+    });
+    const endpoint = `https://api.slingacademy.com/v1/sample-data/blog-posts`;
 
-    return this._http.get<SlingPostListResponse>(endpoint);
+    return this._http.get<SlingPostListResponse>(endpoint, { params });
   }
 
   getPostById(id: string): Observable<SlingPost> {

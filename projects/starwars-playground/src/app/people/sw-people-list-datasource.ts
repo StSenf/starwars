@@ -1,9 +1,8 @@
 import { DataSource } from '@angular/cdk/collections';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
+import { merge, Observable, of as observableOf } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { Observable, of as observableOf, merge } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
 
 // TODO: Replace this with your own data model type
 export interface SwMaterialTableItem {
@@ -41,7 +40,7 @@ const EXAMPLE_DATA: SwMaterialTableItem[] = [
  * encapsulate all logic for fetching and manipulating the displayed data
  * (including sorting, pagination, and filtering).
  */
-export class SwMaterialTableDataSource extends DataSource<SwMaterialTableItem> {
+export class SwPeopleListDatasource extends DataSource<SwMaterialTableItem> {
   // data: SwMaterialTableItem[] = EXAMPLE_DATA;
   data: SwMaterialTableItem[] = EXAMPLE_DATA;
   paginator: MatPaginator | undefined;

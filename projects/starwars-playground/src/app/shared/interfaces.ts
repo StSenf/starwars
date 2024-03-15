@@ -1,16 +1,29 @@
-export interface SwApiResponse {
-  count?: number; // swapi.dev specific
-  total_records?: number; // swapi.tech specific
-  next?: string;
-  previous?: string;
-  results:
-    | SwPerson[]
-    | SwPlanet[]
-    | SwFilm[]
-    | SwStarship[]
-    | SwVehicle[]
-    | SwSpecies[];
+/** Response object when getting data from root resources from https://www.swapi.tech/api/XYZ/ */
+export interface SwDotTechResponse {
+  message: string;
+  next: string;
+  previous: string;
+  results: SwDotTechResource[]; // attention: https://www.swapi.tech/api/films gives back "result" instead of "results"
+  total_pages: number;
+  total_records: number;
 }
+
+/** Swapi.tech resource. Mainly carries the url to the resource.
+ * Could be a Planet, a Person and so on. */
+export interface SwDotTechResource {
+  uid: string;
+  name: string;
+  url: string;
+}
+export interface SwDotTechResourceResponse {
+  message: string;
+  result: {
+    description?: string;
+    uid?: number;
+    properties: SwEntity;
+  };
+}
+
 export interface SwPerson {
   name: string;
   birth_year: string;
@@ -121,3 +134,11 @@ export interface SwPlanet {
   created: string; //the ISO 8601 date format of the time that this resource was created.
   edited: string; // the ISO 8601 date format of the time that this resource was edited.
 }
+
+export type SwEntity =
+  | SwPerson
+  | SwPlanet
+  | SwFilm
+  | SwStarship
+  | SwVehicle
+  | SwSpecies;

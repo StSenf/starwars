@@ -33,4 +33,5 @@ export const routes: Routes = [
     },
   },
   { path: '', redirectTo: '/students', pathMatch: 'full' },
+  { path: '**', redirectTo: '/students', pathMatch: 'full' }, // Wildcard route for a not found page
 ];

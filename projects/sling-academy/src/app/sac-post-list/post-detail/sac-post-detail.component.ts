@@ -1,6 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Data, Router } from '@angular/router';
+import { ActivatedRoute, Data } from '@angular/router';
 import { take } from 'rxjs';
 import { SlingPost, SlingPostResponse } from '../../shared/interfaces';
 
@@ -14,14 +14,10 @@ import { SlingPost, SlingPostResponse } from '../../shared/interfaces';
 export class SacPostDetailComponent implements OnInit {
   post: SlingPost;
 
-  constructor(
-    private _activatedRoute: ActivatedRoute,
-    private _router: Router,
-  ) {}
+  constructor(private _activatedRoute: ActivatedRoute) {}
 
   ngOnInit() {
     this._activatedRoute.data.pipe(take(1)).subscribe((data: Data) => {
-      console.log('active route data', data);
       this.post = (data['postDetails'] as SlingPostResponse).blog;
     });
   }

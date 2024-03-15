@@ -1,8 +1,6 @@
 export interface SwTableConfig {
-  /** Endpoint from where the table data is fetched. */
-  endpoint: string;
-  /** Possible alternate endpoint with which the limit can be added to the request. */
-  limitEndpoint?: string;
+  /** Endpoint https://www.swapi.tech/api/XYZ with which the limit can be added to the request. */
+  dotTechEndpoint?: string;
   /** Phrase that is visible in search input. */
   searchPhrase: string;
   /** Value that is visible in the select field. */
@@ -20,11 +18,7 @@ export interface SwTableColConfig {
   columnDisplayProperty: string;
   /** Title of the table col e.g. "Diameter in meter". */
   columnTitle: string;
-  /** True if the value of the column's cells is a URL/endpoint. */
-  areCellValuesUrl: boolean;
-  /** True if an array of urls/endpoints is handed back as cell value. */
-  isUrlMultiple?: boolean;
-  /** Property of the URL/endpoint response that should be displayed in each cell (if property value is URL) e.g. "title" */
+  /** If columnDisplayProperty value is URL, this is the property of the URL response that should be displayed in each cell. (e.g. "title") */
   urlDisplayProperty?: string;
   /**
    * If set to true, this column will be sortable.

@@ -2,8 +2,11 @@ import { AsyncPipe, NgClass, NgIf } from '@angular/common';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { STANDARD_SORT_DIRECTION } from '../config/plain-table-constants';
-import { ColumnSorting, SortDirection } from '../model/plain-table.interfaces';
+import {
+  ColumnSorting,
+  SortDirection,
+} from '../../shared/plain-table.interfaces';
+import { STANDARD_SORT_DIRECTION } from '../plain-table-constants';
 
 /**
  * This component renders an arrow icon. By default, the icon is faced upwards (ASC).

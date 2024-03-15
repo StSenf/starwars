@@ -1,0 +1,77 @@
+<ng-container
+  *ngIf="{
+    isApiCallCompleted: isApiCallCompleted$ | async,
+    swSpecies: swSpecies$ | async,
+    currentColumnSorting: currentColumnSorting$ | async
+  } as obj"
+>
+  <div class="row p-2 mb-3">
+    <div class="col-4">
+      <div class="form-group">
+        <input
+          [formControl]="searchControl"
+          type="text"
+          class="form-control"
+          placeholder="{{ tableConfig.searchPhrase }}"
+        />
+      </div>
+    </div>
+  </div>
+
+  <table class="table p-2">
+    <thead class="thead-dark">
+      <tr>
+        <th scope="col">#</th>
+        <th *ngFor="let colConfig of tableConfig.columnConfig" scope="col">
+          {{ colConfig.columnTitle }}
+          <sw-sort
+            *ngIf="colConfig.isSortable"
+            [currentTableSorting]="obj.currentColumnSorting"
+            [columnName]="colConfig.columnDisplayProperty"
+            (sorted)="sortColumn($event)"
+          ></sw-sort>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr
+        *ngIf="obj.isApiCallCompleted === true && obj.swSpecies?.length === 0"
+      >
+        <td [attr.colspan]="tableConfig?.columnConfig?.length + 1">
+          No data found
+        </td>
+      </tr>
+      <ng-container *ngIf="obj.swSpecies?.length > 0">
+        <tr *ngFor="let species of obj.swSpecies; let i = index">
+          <th scope="row">
+            {{ i + 1 }}
+          </th>
+          <td *ngFor="let config of tableConfig.columnConfig">
+            {{ species[config.columnDisplayProperty] }}
+          </td>
+        </tr>
+      </ng-container>
+    </tbody>
+  </table>
+</ng-container>
+
+<div class="d-flex align-items-center p-2">
+  <select
+    class="form-select"
+    style="width: auto"
+    [formControl]="pageLimitControl"
+  >
+    <option *ngFor="let option of pageLimitConfig" [ngValue]="option.value">
+      {{ option.displayValue }}
+    </option>
+  </select>
+
+  <lib-pagination
+    style="margin-left: auto"
+    *ngIf="availableRecords"
+    [availableRecords]="availableRecords"
+    [currentPageSize]="currentPageLimit"
+    [currentPage]="currentPage"
+    (clickedPage)="changePage($event)"
+  ></lib-pagination>
+</div>
