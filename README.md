@@ -1,6 +1,6 @@
 # Angular multi projects project
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.0.9.
+This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.0.9 and Node version 20.10.0.
 
 ## About
 
@@ -15,19 +15,19 @@ Simply use a command
 - `npm run start:starwars` (starts the star wars project)
 - `npm run start:sling` (starts the sling academy project)
 
-and navigate to `http://localhost:4200/`.
+and open `http://localhost:4200/` in your browser.
 
 ## Development instructions
 
-To start developing in either of the applications, you need to run them and additionally run the library in watch mode. To achieve this, run the following commands:
+To start developing in either of the applications, you need to run them and optionally run the library in watch mode. To achieve this, run the following commands:
 
-- `npm run watch:shared` and `ng serve`
-- `npm run watch:shared` and `npm run start:starwars`
-- `npm run watch:shared` and `npm run start:sling`
+- `npm run watch:shared` (optional) and `ng serve`
+- `npm run watch:shared` (optional) and `npm run start:starwars`
+- `npm run watch:shared` (optional) and `npm run start:sling`
   
 in two different Terminals
 
-Then navigate to `http://localhost:4200/`. The projects will automatically reload if you change any source files.
+Open `http://localhost:4200/` in your browser. File changes will automatically trigger a page refresh.
 
 ## Running unit tests
 
