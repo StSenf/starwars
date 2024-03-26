@@ -8,6 +8,7 @@ export const PLANETS_TABLE_CONFIG: SwTableConfig = {
     {
       columnDisplayProperty: 'name',
       columnTitle: 'Planet',
+      isSortable: true,
     },
     {
       columnDisplayProperty: 'diameter',

@@ -41,12 +41,15 @@ export class SwapiService {
 
     return this._http.get<SwDotTechResponse>(endpoint, { params }).pipe(
       map((resp: SwDotTechResponse) => {
-        return !!columnSorting === true
-          ? this.sortResponseResults(resp, columnSorting)
-          : { ...resp };
+        return !!columnSorting === false ||
+          Object.keys(columnSorting).length === 0
+          ? { ...resp }
+          : this.sortResponseResults(resp, columnSorting);
       }),
       catchError((error: HttpErrorResponse) => {
-        return throwError(`Error while fetching table data. ${error.message}`);
+        return throwError(
+          () => `Error while fetching table data. ${error.message}`,
+        );
       }),
     );
   }
@@ -80,6 +83,7 @@ export class SwapiService {
     const sortedResults = response.results.sort((a, b) => {
       const elmA = a[columnSorting.colName];
       const elmB = b[columnSorting.colName];
+
       if (elmA < elmB) {
         return isDirectionAsc ? -1 : 1;
       }

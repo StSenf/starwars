@@ -24,6 +24,7 @@ import {
   LibLoadingModalComponent,
   LibPaginationComponent,
 } from 'shared-components';
+import { searchFirstSortableColumn } from '../shared/helper-methods';
 import {
   SwDotTechResource,
   SwDotTechResourceResponse,
@@ -33,13 +34,11 @@ import {
 import {
   PAGE_LIMIT_OPTIONS,
   STANDARD_PAGE_LIMIT,
-  STANDARD_SORT_DIRECTION,
 } from '../shared/plain-table-constants';
 
 import {
   ColumnSorting,
   PageLimitOptions,
-  SwTableColConfig,
   SwTableConfig,
 } from '../shared/plain-table.interfaces';
 import { SwapiService } from '../shared/services/swapi.service';
@@ -69,10 +68,9 @@ export class SwPlanetsListComponent implements OnInit, OnDestroy {
 
   currentPageLimit: number = STANDARD_PAGE_LIMIT;
   currentPage: number = 1;
-  currentColumnSorting$ = new BehaviorSubject<ColumnSorting>({});
-  // currentColumnSorting$ = new BehaviorSubject<ColumnSorting>(
-  //   this.searchFirstSortableColumn(STANDARD_TABLE_CONFIG),
-  // );
+  currentColumnSorting$ = new BehaviorSubject<ColumnSorting>(
+    searchFirstSortableColumn(PLANETS_TABLE_CONFIG),
+  );
 
   swPlanets$: Observable<SwPlanet[]>;
   isApiCallCompleted$ = new BehaviorSubject<boolean>(false);
@@ -188,23 +186,5 @@ export class SwPlanetsListComponent implements OnInit, OnDestroy {
       colName: sorting.colName,
       direction: sorting.direction,
     });
-  }
-
-  /**
-   * Returns column sorting object with the first found sortable column of the table configuration.
-   * If none found, and empty object is returned.
-   * @param tableConfig Current table config
-   */
-  searchFirstSortableColumn(tableConfig: SwTableConfig): ColumnSorting {
-    const firstSortableCol: SwTableColConfig = tableConfig.columnConfig.find(
-      (elm: SwTableColConfig) => elm.isSortable === true,
-    );
-
-    return firstSortableCol
-      ? {
-          colName: firstSortableCol.columnDisplayProperty,
-          direction: STANDARD_SORT_DIRECTION,
-        }
-      : {};
   }
 }

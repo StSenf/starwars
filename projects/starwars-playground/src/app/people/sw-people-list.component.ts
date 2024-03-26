@@ -34,12 +34,12 @@ import {
   LibEndpointDisplayValueComponent,
   LibLoadingModalComponent,
 } from 'shared-components';
+import { replaceUrlWithResourceName } from '../shared/helper-methods';
 
 import {
   SwDotTechResource,
   SwDotTechResourceResponse,
   SwDotTechResponse,
-  SwEntity,
   SwPerson,
 } from '../shared/interfaces';
 
@@ -149,7 +149,7 @@ export class SwPeopleListComponent implements OnInit, OnDestroy {
       .subscribe((ppl: SwPerson[]) => {
         this.dataSource.data = ppl.map((person: SwPerson) => ({
           ...person,
-          homeworld: this.replaceUrlWithResourceName(
+          homeworld: replaceUrlWithResourceName(
             person,
             'homeworld',
             this._allPlanetResources,
@@ -192,27 +192,5 @@ export class SwPeopleListComponent implements OnInit, OnDestroy {
     return this._http.get<SwDotTechResponse>(
       assembledEndpoint,
     ) as Observable<SwDotTechResponse>;
-  }
-
-  /**
-   * Replaces a URL with the actual resource name.
-   * e.g.: the url for a planet is given https://www.swapi.tech/api/planet/4,
-   * and we want to know the name of the planet.
-   *
-   * @param entity
-   * @param entityPropertyWithUrl
-   * @param resourcesToCheck
-   */
-  private replaceUrlWithResourceName(
-    entity: SwEntity,
-    entityPropertyWithUrl: string,
-    resourcesToCheck: SwDotTechResource[],
-  ): string {
-    return (
-      resourcesToCheck.find(
-        (resource: SwDotTechResource) =>
-          resource.url === entity[entityPropertyWithUrl],
-      )?.name || 'no data provided'
-    );
   }
 }

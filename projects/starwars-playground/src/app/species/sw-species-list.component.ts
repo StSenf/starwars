@@ -21,10 +21,14 @@ import {
   LibPaginationComponent,
 } from 'shared-components';
 import {
+  replaceUrlListWithResourceNames,
+  replaceUrlWithResourceName,
+  searchFirstSortableColumn,
+} from '../shared/helper-methods';
+import {
   SwDotTechResource,
   SwDotTechResourceResponse,
   SwDotTechResponse,
-  SwEntity,
   SwSpecies,
 } from '../shared/interfaces';
 import {
@@ -60,10 +64,9 @@ export class SwSpeciesListComponent implements OnInit, OnDestroy {
 
   currentPageLimit: number = STANDARD_PAGE_LIMIT;
   currentPage: number = 1;
-  currentColumnSorting$ = new BehaviorSubject<ColumnSorting>({});
-  // currentColumnSorting$ = new BehaviorSubject<ColumnSorting>(
-  //   this.searchFirstSortableColumn(STANDARD_TABLE_CONFIG),
-  // );
+  currentColumnSorting$ = new BehaviorSubject<ColumnSorting>(
+    searchFirstSortableColumn(SPECIES_TABLE_CONFIG),
+  );
 
   swSpecies$: Observable<SwSpecies[]>;
   isApiCallCompleted$ = new BehaviorSubject<boolean>(false);
@@ -161,12 +164,12 @@ export class SwSpeciesListComponent implements OnInit, OnDestroy {
             const species: SwSpecies = response.result.properties as SwSpecies;
             return {
               ...species,
-              homeworld: this.replaceUrlWithResourceName(
+              homeworld: replaceUrlWithResourceName(
                 species,
                 'homeworld',
                 this._allPlanetResources,
               ),
-              people: this.replaceUrlListWithResourceNames(
+              people: replaceUrlListWithResourceNames(
                 species,
                 'people',
                 this._allPeopleResources,
@@ -201,49 +204,5 @@ export class SwSpeciesListComponent implements OnInit, OnDestroy {
       colName: sorting.colName,
       direction: sorting.direction,
     });
-  }
-
-  /**
-   * Replaces a URL with the actual resource name.
-   * e.g.: the url for a planet is given https://www.swapi.tech/api/planet/4,
-   * and we want to know the name of the planet.
-   *
-   * @param entity
-   * @param entityPropertyWithUrl
-   * @param resourcesToCheck
-   */
-  private replaceUrlWithResourceName(
-    entity: SwEntity,
-    entityPropertyWithUrl: string,
-    resourcesToCheck: SwDotTechResource[],
-  ): string {
-    return (
-      resourcesToCheck.find(
-        (resource: SwDotTechResource) =>
-          resource.url === entity[entityPropertyWithUrl],
-      )?.name || 'no data provided'
-    );
-  }
-
-  /**
-   * Replaces a list of URLs with the actual resource names.
-   * e.g.: a list with several urls is given ['https://www.swapi.tech/api/people/4', 'https://www.swapi.tech/api/people/1']
-   * and we want to know the names of this people and will return a list like ["Luke Skywalker", "R2D2"].
-   *
-   * @param entity
-   * @param entityPropertyWithUrlList
-   * @param resourcesToCheck
-   */
-  private replaceUrlListWithResourceNames(
-    entity: SwEntity,
-    entityPropertyWithUrlList: string,
-    resourcesToCheck: SwDotTechResource[],
-  ): string[] {
-    return entity[entityPropertyWithUrlList].map(
-      (url: string) =>
-        resourcesToCheck.find(
-          (resource: SwDotTechResource) => resource.url === url,
-        )?.name || 'no data provided',
-    );
   }
 }
