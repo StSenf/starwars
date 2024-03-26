@@ -34,6 +34,8 @@ export class SwapiService {
       fromObject: { page, limit: pageLimit },
     });
     if (searchTerm) {
+      // ToDo: search gives back SwDotTechSearchResponse, not a full SwDotTechResponse --> what is architectural decision?
+      // ToDo: params for searching should be params.append('name', searchTerm);
       params = params.append('search', searchTerm);
     }
 

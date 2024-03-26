@@ -1,4 +1,6 @@
-/** Response object when getting data from root resources from https://www.swapi.tech/api/XYZ/ */
+/**
+ * Response object when getting data from root resources from e.g. https://www.swapi.tech/api/planets/
+ */
 export interface SwDotTechResponse {
   message: string;
   next: string;
@@ -8,20 +10,58 @@ export interface SwDotTechResponse {
   total_records: number;
 }
 
-/** Swapi.tech resource. Mainly carries the url to the resource.
- * Could be a Planet, a Person and so on. */
+/**
+ * Resource.
+ * Mainly carries the url to the resource (e.g. https://www.swapi.tech/api/planets/1).
+ * Resource could be a Planet, a Person and so on.
+ *
+ * Example:
+ * { uid: "1", name: "Tatooine", url: "https://www.swapi.tech/api/planets/1" }
+ */
 export interface SwDotTechResource {
   uid: string;
   name: string;
   url: string;
 }
+
+/**
+ * Resource result.
+ * Carries the final entity.
+ * Entity is the Planet, Person and so on.
+ *
+ * Example:
+ * {
+ *   description: "A planet.",
+ *   uid: "1",
+ *   properties: {
+ *     diameter: "1456",
+ *     name: "Tatooine",
+ *     terrain: "dessert",
+ *   }
+ * }
+ */
+export interface SwDotTechResourceResult {
+  description?: string;
+  uid?: number;
+  properties: SwEntity;
+}
+
+/**
+ * Response object when getting data from a specific
+ * endpoint e.g. https://www.swapi.tech/api/planets/1
+ */
 export interface SwDotTechResourceResponse {
   message: string;
-  result: {
-    description?: string;
-    uid?: number;
-    properties: SwEntity;
-  };
+  result: SwDotTechResourceResult;
+}
+
+/**
+ * Response object when searching for data from a specific
+ * endpoint e.g. https://www.swapi.tech/api/planets?page=1&limit=10&name=ine
+ */
+export interface SwDotTechSearchResponse {
+  message: string;
+  result: SwDotTechResourceResult[];
 }
 
 export interface SwPerson {
