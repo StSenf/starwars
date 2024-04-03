@@ -2,7 +2,7 @@ import { NgForOf, NgIf } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { combineLatest, startWith, Subject, takeUntil } from 'rxjs';
-import { LibToggleComponent } from 'shared-components';
+import { LibToggleComponent } from '@shared-components';
 
 @Component({
   standalone: true,

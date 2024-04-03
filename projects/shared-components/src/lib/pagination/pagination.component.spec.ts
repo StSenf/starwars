@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { LibPaginationComponent } from './pagination.component';
 import Spy = jasmine.Spy;
+import SpyInstance = jest.SpyInstance;
 
 describe('SwPaginationComponent', () => {
   let component: LibPaginationComponent;
@@ -71,10 +72,15 @@ describe('SwPaginationComponent', () => {
   });
 
   describe('clicking page element', () => {
-    let clickEventSpy: Spy;
+    let clickEventSpy: SpyInstance;
 
     beforeEach(() => {
-      clickEventSpy = spyOn(component.clickedPage, 'next');
+      clickEventSpy = jest.spyOn(component.clickedPage, 'next');
+    });
+
+    afterEach(() => {
+      clickEventSpy.mockReset();
+      clickEventSpy.mockRestore();
     });
 
     describe('changePage()', () => {

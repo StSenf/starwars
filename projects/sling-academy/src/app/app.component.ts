@@ -13,8 +13,8 @@ import {
 } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgbModalRef } from '@ng-bootstrap/ng-bootstrap/modal/modal-ref';
+import { LibLoadingModalComponent } from '@shared-components';
 import { debounceTime, Subject, takeUntil } from 'rxjs';
-import { LibLoadingModalComponent } from 'shared-components';
 
 @Component({
   selector: 'app-root',

@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { LibLoadingModalComponent } from 'shared-components';
+import { LibLoadingModalComponent } from '@shared-components';
 import { ShowcaseEndpointDisplayValueComponent } from './showcases/showcase-endpoint-display-value.component';
 import { ShowcasePaginationComponent } from './showcases/showcase-pagination.component';
 import { ShowcaseToggleComponent } from './showcases/showcase-toggle.component';

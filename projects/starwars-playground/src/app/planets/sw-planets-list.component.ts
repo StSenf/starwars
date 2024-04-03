@@ -23,7 +23,7 @@ import { map } from 'rxjs/operators';
 import {
   LibLoadingModalComponent,
   LibPaginationComponent,
-} from 'shared-components';
+} from '@shared-components';
 import { searchFirstSortableColumn } from '../shared/helper-methods';
 import {
   SwDotTechResource,

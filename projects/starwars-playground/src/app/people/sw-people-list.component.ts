@@ -33,7 +33,7 @@ import { map } from 'rxjs/operators';
 import {
   LibEndpointDisplayValueComponent,
   LibLoadingModalComponent,
-} from 'shared-components';
+} from '@shared-components';
 import { replaceUrlWithResourceName } from '../shared/helper-methods';
 
 import {

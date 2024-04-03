@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { combineLatest, startWith, Subject, takeUntil } from 'rxjs';
-import { LibPaginationComponent } from 'shared-components';
+import { LibPaginationComponent } from '@shared-components';
 
 @Component({
   standalone: true,

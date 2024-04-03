@@ -2,7 +2,7 @@ import { AsyncPipe, DatePipe, NgFor, NgIf } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorSubject, filter, Observable, switchMap } from 'rxjs';
-import { LibPaginationComponent } from 'shared-components';
+import { LibPaginationComponent } from '@shared-components';
 
 import { SlingStudentListResponse } from '../shared/interfaces';
 import { SlingAcademyService } from '../shared/sling-academy.service';

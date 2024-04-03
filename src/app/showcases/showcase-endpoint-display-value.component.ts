@@ -8,7 +8,7 @@ import {
   Subject,
   takeUntil,
 } from 'rxjs';
-import { LibEndpointDisplayValueComponent } from 'shared-components';
+import { LibEndpointDisplayValueComponent } from '@shared-components';
 
 interface EndpointConfiguration {
   endpoint: string;
