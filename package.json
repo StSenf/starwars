@@ -5,6 +5,7 @@
     "ng": "ng",
     "build": "ng build",
     "test:jest": "jest",
+    "test:jest:onlychanged": "jest --onlyChanged",
     "test:jest:starwars": "jest --projects projects/starwars-playground",
     "test:jest:sling": "jest --projects projects/sling-academy",
     "test:jest:shared": "jest --projects projects/shared-components",
