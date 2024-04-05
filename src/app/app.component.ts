@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { LibLoadingModalComponent } from 'shared-components';
 import { ShowcaseEndpointDisplayValueComponent } from './showcases/showcase-endpoint-display-value.component';
@@ -10,6 +10,7 @@ import { ShowcaseToggleComponent } from './showcases/showcase-toggle.component';
   standalone: true,
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   imports: [
     ShowcasePaginationComponent,
     ShowcaseEndpointDisplayValueComponent,
