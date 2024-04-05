@@ -34,7 +34,7 @@ export class LitToDoList extends LitElement {
     const todos = html`
       <ul>
         ${items.map(
-          (item) =>
+          (item: ToDoItem) =>
             html` <li
               class=${classMap({
                 completed: item.completed,
