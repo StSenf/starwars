@@ -4,10 +4,23 @@ import {
   HttpParams,
 } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { catchError, Observable, throwError } from 'rxjs';
+import {
+  catchError,
+  forkJoin,
+  Observable,
+  OperatorFunction,
+  switchMap,
+  throwError,
+} from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import { SwDotTechResourceResponse, SwDotTechResponse } from '../interfaces';
+import {
+  SwDotTechResource,
+  SwDotTechResourceResponse,
+  SwDotTechResponse,
+  SwPerson,
+  SwPlanet,
+} from '../interfaces';
 import { ColumnSorting, SortDirection } from '../plain-table.interfaces';
 
 @Injectable({ providedIn: 'root' })
@@ -61,6 +74,111 @@ export class SwapiService {
    */
   getResource(endpoint: string): Observable<SwDotTechResourceResponse> {
     return this._http.get<SwDotTechResourceResponse>(endpoint);
+  }
+
+  /**
+   * Custom RxJS OperatorFunction<T, R>.
+   * Returns an Observable of all table resource responses.
+   *
+   * Accepts one initial parameter T (SwDotTechResponse) and returns another
+   * parameter R (SwDotTechResourceResponse[]).
+   *
+   * The response to the endpoint e.g. https://www.swapi.tech/api/planets?page=1 will give back a result list
+   * with only resources that carry an url. But we want to display the data of those urls as well in the table.
+   * Therefore, we need to fetch all table resources after each other, using the RxJS forkJoin Operator.
+   *
+   * Initial parameter example: {
+   *   message: "ok",
+   *   total_pages: 6,
+   *   total_records: 60,
+   *   next: "https://www.swapi.tech/api/planets?page=2",
+   *   results: [
+   *     { uid:"1", name: "Tatooine", url: ""https://www.swapi.tech/api/planets/1},
+   *     { uid:"1", name: "Alderaan", url: ""https://www.swapi.tech/api/planets/2},
+   *     { uid:"1", name: "Yavin IV", url: ""https://www.swapi.tech/api/planets/3},
+   *   ]
+   * }
+   *
+   * Return example: [
+   *   { message: "ok", result: {description: "a planet", uid: 1, properties: {...}} },
+   *   { message: "ok", result: {description: "a planet", uid: 2, properties: {...}} },
+   *   { message: "ok", result: {description: "a planet", uid: 3, properties: {...}} },
+   * ]
+   */
+  fetchAllTableResources(): OperatorFunction<
+    SwDotTechResponse,
+    SwDotTechResourceResponse[]
+  > {
+    return (
+      source$: Observable<SwDotTechResponse>,
+    ): Observable<SwDotTechResourceResponse[]> =>
+      source$.pipe(
+        switchMap((techResponse: SwDotTechResponse) => {
+          let forkJoinArr: Observable<SwDotTechResourceResponse>[] =
+            techResponse.results.map((techResource: SwDotTechResource) =>
+              this.getResource(techResource.url),
+            );
+          return forkJoin(forkJoinArr);
+        }),
+      );
+  }
+
+  /**
+   * Custom RxJS OperatorFunction<T, R>.
+   * Returns an Observable of all planets provided in the given SwDotTechResourceResponse[].
+   *
+   * Accepts one parameter T (SwDotTechResourceResponse[]) and returns another
+   * parameter R (SwPlanet[])
+   *
+   * Return example: [
+   *   { name: "Alderaan", diameter: "100", films: ["https://www.swapi.tech/api/films/1"] },
+   *   { name: "Xtr-9", diameter: "1000", films: ["https://www.swapi.tech/api/films/1"] },
+   *   { name: "Dagobah", diameter: "8500", films: ["https://www.swapi.tech/api/films/3"] },
+   * ]
+   */
+  extractAllPlanets(): OperatorFunction<
+    SwDotTechResourceResponse[],
+    SwPlanet[]
+  > {
+    return this.extractResourceEntities<SwPlanet>();
+  }
+
+  /**
+   * Custom RxJS OperatorFunction<T, R>.
+   * Returns an Observable of all persons provided in the given SwDotTechResourceResponse[].
+   *
+   * Accepts one parameter T (SwDotTechResourceResponse[]) and returns another
+   * parameter R (SwPerson[])
+   */
+  extractAllPersons(): OperatorFunction<
+    SwDotTechResourceResponse[],
+    SwPerson[]
+  > {
+    return this.extractResourceEntities<SwPerson>();
+  }
+
+  /**
+   * Custom RxJS OperatorFunction<T, R>.
+   * Returns an Observable of entities provided in the given SwDotTechResourceResponse[].
+   *
+   * Accepts one parameter T (SwDotTechResourceResponse[]) and returns another
+   * parameter R (Generic type).
+   */
+  private extractResourceEntities<T>(): OperatorFunction<
+    SwDotTechResourceResponse[],
+    T[]
+  > {
+    return (
+      source$: Observable<SwDotTechResourceResponse[]>,
+    ): Observable<T[]> =>
+      source$.pipe(
+        map((resourceResponse: SwDotTechResourceResponse[]) => {
+          return resourceResponse.map(
+            (response: SwDotTechResourceResponse) =>
+              response.result.properties as T,
+          );
+        }),
+      );
   }
 
   /**

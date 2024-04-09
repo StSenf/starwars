@@ -13,20 +13,18 @@ import {
   combineLatest,
   debounceTime,
   distinctUntilChanged,
-  forkJoin,
   Observable,
   startWith,
   Subject,
   switchMap,
+  tap,
 } from 'rxjs';
-import { map } from 'rxjs/operators';
 import {
   LibLoadingModalComponent,
   LibPaginationComponent,
 } from 'shared-components';
 import { searchFirstSortableColumn } from '../shared/helper-methods';
 import {
-  SwDotTechResource,
   SwDotTechResourceResponse,
   SwDotTechResponse,
   SwPlanet,
@@ -141,25 +139,16 @@ export class SwPlanetsListComponent implements OnInit, OnDestroy {
           columnSorting,
         );
       }),
-      switchMap((planetsResponse: SwDotTechResponse) => {
-        this.availableRecords = planetsResponse.total_records;
-
-        let forkJoinArr: Observable<SwDotTechResourceResponse>[] =
-          planetsResponse.results.map((planetResource: SwDotTechResource) =>
-            this._swapiService.getResource(planetResource.url),
-          );
-        return forkJoin(forkJoinArr);
-      }),
-      map((planetResourceResponse: SwDotTechResourceResponse[]) => {
+      tap(
+        (planetResponse: SwDotTechResponse) =>
+          (this.availableRecords = planetResponse.total_records),
+      ),
+      this._swapiService.fetchAllTableResources(),
+      tap((planetResourceResponse: SwDotTechResourceResponse[]) => {
         this.isApiCallCompleted$.next(!!planetResourceResponse);
-        if (this._modalReference) {
-          this._modalReference.close();
-        }
-        return planetResourceResponse.map(
-          (response: SwDotTechResourceResponse) =>
-            response.result.properties as SwPlanet,
-        );
+        if (this._modalReference) this._modalReference.close();
       }),
+      this._swapiService.extractAllPlanets(),
     );
   }
 
