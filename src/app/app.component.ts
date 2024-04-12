@@ -23,4 +23,9 @@ export class AppComponent {
   openModal(): void {
     this._modalService.open(LibLoadingModalComponent);
   }
+
+  editUser(event: Event) {
+    const user = (event as CustomEvent).detail;
+    console.log('Edit user', user);
+  }
 }

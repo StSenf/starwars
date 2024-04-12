@@ -24,8 +24,54 @@
 
   <div class="row">
     <div class="col-md-8 col-lg-6 col">
-      <h2>Very first Lit case</h2>
-      <lit-iterable-lists></lit-iterable-lists>
+      <h2>Lit Card</h2>
+      <lit-card-user
+        [user]="{
+          id: 2,
+          fullName: 'Anna Bella',
+          role: 'CEO'
+        }"
+        (edit)="editUser($event)"
+      ></lit-card-user>
+    </div>
+    <hr />
+  </div>
+
+  <div class="row">
+    <div class="col-md-8 col-lg-6 col">
+      <h2>Lit Carousel</h2>
+      <lit-carousel id="carousel" selected="2">
+        <img src="https://picsum.photos/seed/1/200" />
+        <img src="https://picsum.photos/seed/2/200" />
+        <img src="https://picsum.photos/seed/3/200" />
+        <img src="https://picsum.photos/seed/4/200" />
+        <img src="https://picsum.photos/seed/5/200" />
+        <img src="https://picsum.photos/seed/6/200" />
+      </lit-carousel>
+    </div>
+    <hr />
+  </div>
+
+  <div class="row">
+    <div class="col-md-8 col-lg-6 col">
+      <h3>Welcome</h3>
+      <p>
+        Who are you?
+        <span class="icon">I</span>
+        <lit-tooltip>Enter your name...</lit-tooltip>
+      </p>
+
+      <h3>Some boxes hinted with tooltips</h3>
+      <section>
+        <div class="box">1</div>
+        <lit-tooltip>This is box 1.</lit-tooltip>
+
+        <div class="box">2</div>
+        <lit-tooltip>This is box 2.</lit-tooltip>
+
+        <div class="box right">3</div>
+        <lit-tooltip>This is box 3 and it's way off on its own.</lit-tooltip>
+      </section>
     </div>
     <hr />
   </div>

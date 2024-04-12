@@ -15,3 +15,6 @@ export * from './lib/lit-card-user/lit-card-user';
 export * from './lib/lit-beginner/lit-beginner';
 export * from './lib/lit-to-do-list/lit-to-do-list';
 export * from './lib/lit-iterable-lists/lit-iterable-lists';
+export * from './lib/lit-word-viewer/lit-word-viewer';
+export * from './lib/lit-carousel/lit-carousel';
+export * from './lib/lit-tooltip/lit-tooltip';

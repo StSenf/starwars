@@ -25,7 +25,7 @@ export class LitCardUser extends LitElement {
 
   @property({ type: Object }) user?: User = {
     id: 0,
-    fullName: 'Stephanie Wiedener',
+    fullName: 'Stephanie Wiedner',
     role: 'Software Engineer',
   };
 

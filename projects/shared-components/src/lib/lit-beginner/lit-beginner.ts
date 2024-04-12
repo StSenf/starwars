@@ -4,7 +4,7 @@ import { customElement, property, state } from 'lit/decorators.js';
 @customElement('lit-beginner')
 export class LitBeginner extends LitElement {
   @property() message: string = 'Hello again.';
-  @property() checked: boolean = false;
+  @property({ type: Boolean }) checked = false;
   @state() private name: string = 'Your name here';
 
   override render() {
