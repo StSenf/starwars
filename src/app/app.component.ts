@@ -2,6 +2,7 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { LibLoadingModalComponent } from 'shared-components';
 import { ShowcaseEndpointDisplayValueComponent } from './showcases/showcase-endpoint-display-value.component';
+import { ShowcaseLitPaginationComponent } from './showcases/showcase-lit-pagination.component';
 import { ShowcasePaginationComponent } from './showcases/showcase-pagination.component';
 import { ShowcaseToggleComponent } from './showcases/showcase-toggle.component';
 
@@ -15,6 +16,7 @@ import { ShowcaseToggleComponent } from './showcases/showcase-toggle.component';
     ShowcasePaginationComponent,
     ShowcaseEndpointDisplayValueComponent,
     ShowcaseToggleComponent,
+    ShowcaseLitPaginationComponent,
   ],
 })
 export class AppComponent {

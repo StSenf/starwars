@@ -25,3 +25,4 @@ export * from './lib/lit-tabs/lit-tab-head';
 export * from './lib/lit-tabs/lit-tab-panel';
 export * from './lib/lit-wired-tabs/lit-wired-tab';
 export * from './lib/lit-wired-tabs/lit-wired-tabs';
+export * from './lib/lit-pagination/lit-pagination';

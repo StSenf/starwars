@@ -49,7 +49,7 @@ export class LitTabHead extends LitElement {
 
   @property() tabHeading: string;
 
-  @property({ type: Boolean, reflect: true })
+  @property({ type: Boolean })
   active = false;
 
   /** The panel ID the tab header is associated to. */
